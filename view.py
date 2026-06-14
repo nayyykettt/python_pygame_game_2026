@@ -2,6 +2,18 @@ import pygame
 import sys
 from settings import *
 
+
+def load_image(path, size=None):
+    try:
+        img = pygame.image.load(path).convert_alpha()
+        if size:
+            img = pygame.transform.scale(img, size)
+        return img
+    except pygame.error as e:
+        print(f"[WARNING] Не удалось загрузить {path}: {e}")
+        return None
+
+
 class GameView:
     def __init__(self, screen):
         self.screen = screen
@@ -12,6 +24,12 @@ class GameView:
             self.menu_font = pygame.font.SysFont("arial", 32)
         except:
             self.font, self.large_font, self.active_font, self.menu_font = [pygame.font.Font(None, s) for s in (40, 65, 90, 32)]
+        self.tex_player = load_image(TEX_PLAYER, (PLAYER_SIZE*PROPORTIONAL_COEFFICIENT, PLAYER_SIZE*PROPORTIONAL_COEFFICIENT))
+        self.tex_obstacle = load_image(TEX_OBSTACLE, (OBSTACLE_SIZE*PROPORTIONAL_COEFFICIENT, OBSTACLE_SIZE*PROPORTIONAL_COEFFICIENT))
+        self.tex_zone_yellow = load_image(TEX_ZONE_YELLOW, (ZONE_WIDTH, ZONE_HEIGHT))
+        self.tex_zone_blue = load_image(TEX_ZONE_BLUE, (ZONE_WIDTH, ZONE_HEIGHT))
+        self.tex_bg = load_image(TEX_BG, (WIDTH, HEIGHT))
+        
 
     def draw_button(self, btn):
         pygame.draw.rect(self.screen, btn.bg_color, btn.rect, border_radius=5)
@@ -48,25 +66,47 @@ class GameView:
             self.draw_button(btn)
 
     def draw_game(self, model):
-        self.screen.fill(WHITE)
+        if self.tex_bg:
+            self.screen.blit(self.tex_bg, (0, 0))
+        else:
+            self.screen.fill(WHITE)
         
         if model.rhythm_mode:
             rhythm_txt = self.font.render("РИТМ-РЕЖИМ", True, PLAYER_BLUE)
             self.screen.blit(rhythm_txt, (40, 40))
         
         pygame.draw.line(self.screen, BLACK, (0, GROUND_Y), (WIDTH, GROUND_Y), 5)
+
         for pit in model.pits:
-            pygame.draw.rect(self.screen, WHITE, (pit.rect.left, GROUND_Y - 5, pit.rect.width, 10))
+            pygame.draw.rect(self.screen, PURPLE, (pit.rect.left, GROUND_Y - 5, pit.rect.width, 10))
             for i in range(pit.rect.width // 20):
                 px = pit.rect.left + i * 20
                 pygame.draw.polygon(self.screen, PURPLE, [(px, GROUND_Y + 40), (px + 10, GROUND_Y + 15), (px + 20, GROUND_Y + 40)])
         
-        for p in model.platforms: pygame.draw.rect(self.screen, DARK_GRAY, p.rect, border_radius=4)
-        for z in model.zones: pygame.draw.rect(self.screen, YELLOW if z.zone_type == "yellow" else CYAN_ZONE, z.rect)
-        for o in model.obstacles: pygame.draw.rect(self.screen, RED, o.rect)
-        for h in model.heals: pygame.draw.rect(self.screen, GREEN, h.rect)
+        for p in model.platforms:
+            pygame.draw.rect(self.screen, DARK_GRAY, p.rect, border_radius=4)
         
-        pygame.draw.rect(self.screen, PLAYER_BLUE, model.player.rect)
+        for z in model.zones:
+            tex = self.tex_zone_yellow if z.zone_type == "yellow" else self.tex_zone_blue
+            if tex:
+                self.screen.blit(tex, z.rect)
+            else:
+                color = YELLOW if z.zone_type == "yellow" else CYAN_ZONE
+                pygame.draw.rect(self.screen, color, z.rect)
+        
+        for o in model.obstacles:
+            if self.tex_obstacle:
+                self.screen.blit(self.tex_obstacle, o.rect)
+            else:
+                pygame.draw.rect(self.screen, RED, o.rect)
+        
+        for h in model.heals:
+            pygame.draw.rect(self.screen, GREEN, h.rect)
+        
+        if self.tex_player:
+            self.screen.blit(self.tex_player, model.player.rect)
+        else:
+            pygame.draw.rect(self.screen, PLAYER_BLUE, model.player.rect)
 
         hp_txt = self.font.render(f"Здоровье: {max(0, model.hp):.1f}", True, BLACK)
         g_txt = self.font.render(f"Золото: {model.gold}/{TARGET_GOLD}", True, YELLOW)
