@@ -84,7 +84,7 @@ class GameView:
                 pygame.draw.polygon(self.screen, PURPLE, [(px, GROUND_Y + 40), (px + 10, GROUND_Y + 15), (px + 20, GROUND_Y + 40)])
         
         for p in model.platforms:
-            pygame.draw.rect(self.screen, DARK_GRAY, p.rect, border_radius=4)
+            pygame.draw.rect(self.screen, LIGHT_GRAY, p.rect, border_radius=20)
         
         for z in model.zones:
             tex = self.tex_zone_yellow if z.zone_type == "yellow" else self.tex_zone_blue
