@@ -76,7 +76,7 @@ class GameController:
                     if event.key == pygame.K_ESCAPE:
                         self.state = "MENU"
                     elif event.key == pygame.K_SPACE and self.model.rhythm_mode:
-                        self.model.player.jump(3)
+                        self.model.player.jump(JUMP)
                     elif event.unicode:
                         took_dmg = self.model.word_manager.process_input(event.unicode.lower(), self.model.diff_idx)
                         if took_dmg and self.model.diff_idx != 0:
@@ -84,7 +84,7 @@ class GameController:
                         
                         if self.model.word_manager.check_word_completion(self.model.diff_idx):
                             if not self.model.rhythm_mode:
-                                self.model.player.jump(3)
+                                self.model.player.jump(JUMP)
 
             elif self.state == "GAME_OVER":
                 if event.type == pygame.KEYDOWN and event.key in (pygame.K_RETURN, pygame.K_r):

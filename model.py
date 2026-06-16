@@ -35,7 +35,7 @@ class Player(GameObject):
         
         for plat in platforms:
             if self.rect.right > plat.rect.left and self.rect.left < plat.rect.right:
-                if self.rect.bottom - self.velocity_y - GRAVITY <= plat.rect.top + 15:
+                if self.rect.bottom - self.velocity_y - GRAVITY <= plat.rect.top + PLATFORM_EXT_SIZE:
                     current_floor = plat.rect.top
                     break
 
@@ -110,16 +110,19 @@ class LevelGenerator:
         self.distance_since_last = 0
         self.next_dist = random.randint(*OBSTACLE_DISTANCE_RANGES[diff_idx])
 
-    def _spawn_random_zone(self, model, start_x, width, base_y, diff_idx, chance=0.75):
-        if random.random() > chance or width < ZONE_WIDTH + 20:
+    def _spawn_random_zone(self, model, start_x, width, base_y, diff_idx, chance=ZONE_CHANCE_EASY):
+        if random.random() > chance or width < ZONE_WIDTH + ZONE_WIDTH_SPAWN:
             return
             
-        zx = start_x + random.randint(10, width - ZONE_WIDTH - 10)
+        zx = start_x + random.randint(ZONE_MIN_PADDING_X, width - ZONE_WIDTH - ZONE_MIN_PADDING_X)
         zy = base_y - ZONE_HEIGHT 
         
         z_type = "yellow"
-        if diff_idx in (2, 3):
-            z_type = random.choices(["yellow", "blue"], weights=[50, 50])[0]
+        if diff_idx == 2:
+            z_type = random.choices(["yellow", "blue"], weights=[ZONE_WEIGHT_YELLOW, ZONE_WEIGHT_BLUE])[0]
+        
+        if diff_idx == 3:
+            z_type = random.choices(["yellow", "blue"], weights=[ZONE_WEIGHT_YELLOW_FUN, ZONE_WEIGHT_BLUE_FUN])[0]
             
         model.zones.append(Zone(zx, zy, ZONE_WIDTH, ZONE_HEIGHT, z_type))
 
@@ -132,18 +135,18 @@ class LevelGenerator:
         max_jump_dist = jump_frames * speed
         
         chunk_types = ["ground_rush", "random_platforms", "pit"]
-        weights = [45, 35, 20] if diff_idx == 0 else [30, 50, 20]
+        weights = CHUNK_WEIGHTS_EASY if diff_idx == 0 else CHUNK_WEIGHTS_HARD
         selected = random.choices(chunk_types, weights=weights)[0]
         chunk_width = 0
 
         x_start = WIDTH + SPAWN_OFFSET_X
-        
+
         if selected == "ground_rush":
-            length = random.randint(400, 1000)
+            length = random.randint(GROUND_MIN_LENGTH, GROUND_MAX_LENGTH)
             chunk_width = length
             
             if diff_idx != 0:
-                obs_count = random.randint(1, max(1, length // 250))
+                obs_count = random.randint(1, max(1, length // GROUND_OBSTACLE_DENSITY))
                 for _ in range(obs_count):
                     ox = x_start + random.randint(50, length - OBSTACLE_SIZE - 50)
                     model.obstacles.append(Obstacle(ox, GROUND_Y - OBSTACLE_SIZE, OBSTACLE_SIZE, OBSTACLE_SIZE))
@@ -152,54 +155,54 @@ class LevelGenerator:
                 self._spawn_random_zone(model, x_start, length, GROUND_Y, diff_idx, chance=0.8)
 
         elif selected == "random_platforms":
-            num_plats = random.randint(1, 3)
+            num_plats = random.randint(PLAT_MIN_COUNT, PLAT_MAX_COUNT)
             current_x = x_start
             
             for _ in range(num_plats):
-                plat_w = random.randint(200, 600)
-                plat_y = GROUND_Y - random.randint(60, 150) 
+                plat_w = random.randint(PLAT_MIN_WIDTH, PLAT_MAX_WIDTH)
+                plat_y = GROUND_Y - random.randint(PLAT_MIN_HEIGHT, PLAT_MAX_HEIGHT)
                 
-                model.platforms.append(Platform(current_x, plat_y, plat_w, 20))
+                model.platforms.append(Platform(current_x, plat_y, plat_w, PLAT_THICKNESS))
                 
-                if diff_idx != 0 and plat_w > 300 and random.random() < 0.35:
-                    ox = current_x + random.randint(50, plat_w - OBSTACLE_SIZE - 50)
+                if diff_idx != 0 and plat_w > PLAT_MIN_OBSTACLE and random.random() < PLAT_OBSTACLE_CHANCE:
+                    ox = current_x + random.randint(PLAT_OBSTACLE_PADDING, plat_w - OBSTACLE_SIZE - PLAT_OBSTACLE_PADDING)
                     model.obstacles.append(Obstacle(ox, plat_y - OBSTACLE_SIZE, OBSTACLE_SIZE, OBSTACLE_SIZE))
                 
                 self._spawn_random_zone(model, current_x, plat_w, plat_y, diff_idx, chance=0.85)
                 
-                gap = random.randint(50, int(max_jump_dist * 0.6))
+                gap = random.randint(GAP_MIN, int(max_jump_dist * GAP_MAX_FACTOR))
                 current_x += plat_w + gap
             
             chunk_width = current_x - x_start
 
         elif selected == "pit":
-            pit_w = random.randint(100, int(max_jump_dist * 0.8))
-            model.pits.append(Pit(x_start, GROUND_Y, pit_w, 40))
+            pit_w = random.randint(PIT_MIN_WIDTH, int(max_jump_dist * PIT_MAX_FACTOR))
+            model.pits.append(Pit(x_start, GROUND_Y, pit_w, PIT_HEIGHT))
             chunk_width = pit_w
 
         self.distance_since_last = -chunk_width
         min_d, max_d = OBSTACLE_DISTANCE_RANGES[diff_idx]
-        self.next_dist = random.randint(max(int(max_jump_dist) + 40, min_d), max_d)
+        self.next_dist = random.randint(max(int(max_jump_dist) + SPAWN_RESET_OFFSET, min_d), max_d)
 
 class GameModel:
     def __init__(self):
-        self.diff_idx = 1
-        self.yellow_gold = 10
-        self.blue_gold = 10
-        self.char_dmg = 0.2
-        self.obs_dmg = 0.5
-        self.heal_amt = 1.0
-        self.rhythm_mode = False
+        self.diff_idx = DEF_DIF
+        self.yellow_gold = DEF_YELLOW_GOLD
+        self.blue_gold = DEF_BLUE_GOLD
+        self.char_dmg = DEF_CHAR_DAMAGE
+        self.obs_dmg = DEF_OBSTACLE_DAMAGE
+        self.heal_amt = DEF_HEAL_AMOUNT
+        self.rhythm_mode = DEF_RHYTHM_MODE
 
-        self.player = Player(200, GROUND_Y - PLAYER_SIZE, PLAYER_SIZE)
+        self.player = Player(PLAYER_START_X, GROUND_Y - PLAYER_SIZE, PLAYER_SIZE)
         self.word_manager = WordManager()
         self.generator = LevelGenerator()
         
         self.reset_state()
 
     def reset_state(self):
-        self.hp = 10.0
-        self.gold = 0
+        self.hp = MAX_HP
+        self.gold = START_GOLD
         self.game_over = False
         self.is_victory = False
         self.start_time = time.time()
@@ -211,7 +214,7 @@ class GameModel:
         self.zones = []
         self.heals = []
         
-        self.player = Player(200, GROUND_Y - PLAYER_SIZE, PLAYER_SIZE)
+        self.player = Player(PLAYER_START_X, PLAYER_START_Y, PLAYER_SIZE)
         self.word_manager = WordManager()
         self.word_manager.init_words(self.diff_idx)
         self.generator.reset(self.diff_idx)
