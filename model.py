@@ -126,6 +126,14 @@ class LevelGenerator:
             
         model.zones.append(Zone(zx, zy, ZONE_WIDTH, ZONE_HEIGHT, z_type))
 
+    def _spawn_heal(self, model, start_x, width, base_y):
+        if random.random() > HEAL_CHANCE or width < HEAL_SIZE + HEAL_MIN_PADDING_X * 2:
+            return
+            
+        hx = start_x + random.randint(HEAL_MIN_PADDING_X, width - HEAL_SIZE - HEAL_MIN_PADDING_X)
+        hy = base_y - HEAL_SIZE - random.randint(0, HEAL_SPAWN_HEIGHT_VARIATION)
+        model.heals.append(HealItem(hx, hy, HEAL_SIZE, HEAL_SIZE))
+
     def generate_chunk(self, model, speed, diff_idx):
         self.distance_since_last += speed
         if self.distance_since_last < self.next_dist:
@@ -148,11 +156,13 @@ class LevelGenerator:
             if diff_idx != 0:
                 obs_count = random.randint(1, max(1, length // GROUND_OBSTACLE_DENSITY))
                 for _ in range(obs_count):
-                    ox = x_start + random.randint(50, length - OBSTACLE_SIZE - 50)
+                    ox = x_start + random.randint(OBS_SPAWN_MIN_OFFSET, length - OBSTACLE_SIZE - OBS_PADDING_GROUND)
                     model.obstacles.append(Obstacle(ox, GROUND_Y - OBSTACLE_SIZE, OBSTACLE_SIZE, OBSTACLE_SIZE))
             
             for _ in range(random.randint(1, 2)):
-                self._spawn_random_zone(model, x_start, length, GROUND_Y, diff_idx, chance=0.8)
+                self._spawn_random_zone(model, x_start, length, GROUND_Y, diff_idx, chance=ZONE_CHANCE_RUSH)
+
+            self._spawn_heal(model, x_start, length, GROUND_Y)
 
         elif selected == "random_platforms":
             num_plats = random.randint(PLAT_MIN_COUNT, PLAT_MAX_COUNT)
@@ -168,7 +178,8 @@ class LevelGenerator:
                     ox = current_x + random.randint(PLAT_OBSTACLE_PADDING, plat_w - OBSTACLE_SIZE - PLAT_OBSTACLE_PADDING)
                     model.obstacles.append(Obstacle(ox, plat_y - OBSTACLE_SIZE, OBSTACLE_SIZE, OBSTACLE_SIZE))
                 
-                self._spawn_random_zone(model, current_x, plat_w, plat_y, diff_idx, chance=0.85)
+                self._spawn_random_zone(model, current_x, plat_w, plat_y, diff_idx, chance=ZONE_CHANCE_PLAT)
+                self._spawn_heal(model, current_x, plat_w, plat_y)
                 
                 gap = random.randint(GAP_MIN, int(max_jump_dist * GAP_MAX_FACTOR))
                 current_x += plat_w + gap
