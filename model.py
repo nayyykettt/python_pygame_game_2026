@@ -222,9 +222,9 @@ class GameModel:
     def update(self):
         if self.game_over: return
 
-        progression = 1.0 + ((self.gold / TARGET_GOLD) * 1.5)
+        progression = 1.0 + ((self.gold / TARGET_GOLD) * PROGRESSION_SCALE)
         diff_factor = DIFFICULTY_MULTIPLIERS[self.diff_idx] * progression
-        speed = min(int(12 * diff_factor), 35)
+        speed = min(int(BASE_SPEED * diff_factor), MAX_SPEED)
 
         self.player.update_physics(self.platforms)
         self.generator.generate_chunk(self, speed, self.diff_idx)
@@ -242,18 +242,18 @@ class GameModel:
 
     def _check_collisions(self):
         for pit in self.pits:
-            if pit.rect.left + 12 < self.player.rect.centerx < pit.rect.right - 12:
+            if pit.rect.left + PIT_COLLISION_MARGIN < self.player.rect.centerx < pit.rect.right - PIT_COLLISION_MARGIN:
                 if self.player.rect.bottom >= GROUND_Y: self.hp = 0
 
         for obs in self.obstacles[:]:
             if self.player.rect.colliderect(obs.rect):
-                if self.diff_idx == 3: self.hp = 0
-                elif self.diff_idx != 0: self.hp -= self.obs_dmg
+                if self.diff_idx == INSTANT_DEATH_IDX: self.hp = 0
+                elif self.diff_idx != NO_DAMAGE_IDX: self.hp -= self.obs_dmg
                 self.obstacles.remove(obs)
 
         for heal in self.heals[:]:
             if self.player.rect.colliderect(heal.rect):
-                self.hp = min(10.0, self.hp + self.heal_amt)
+                self.hp = min(MAX_HP, self.hp + self.heal_amt)
                 self.heals.remove(heal)
 
         for zone in self.zones[:]:
