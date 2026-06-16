@@ -22,16 +22,16 @@ class GameController:
 
     def setup_menu_buttons(self):
         self.buttons = []
-        start_y = 130
+        start_y = START_Y
         
         actions = ["diff", "y_gold", "b_gold", "c_dmg", "o_dmg", "heal", "rhythm"]
         for i, act in enumerate(actions):
-            y = start_y + i * 65
-            self.buttons.append(Button(WIDTH // 2 + 60, y, 40, 40, "-", f"{act}_minus"))
-            self.buttons.append(Button(WIDTH // 2 + 110, y, 40, 40, "+", f"{act}_plus"))
+            y = start_y + i * MENU_SPASING_Y
+            self.buttons.append(Button(WIDTH // 2 + MENU_MINUS_OFFSET_X, y, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, "-", f"{act}_minus"))
+            self.buttons.append(Button(WIDTH // 2 + MENU_PLUS_OFFSET_X, y, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, "+", f"{act}_plus"))
 
-        self.buttons.append(Button(WIDTH // 2 - 150, start_y + 7 * 65, 300, 60, "ЗАПУСТИТЬ", "start", GREEN, WHITE))
-        self.buttons.append(Button(WIDTH // 2 - 150, start_y + 7 * 65 + 75, 300, 60, "ВЫХОД", "quit", RED, WHITE))
+        self.buttons.append(Button(WIDTH // 2 - QUITSTART_OFFSET, start_y + MENU_START_Y_OFFSET, MENU_ACTION_WIDTH, MENU_ACTION_HEIGHT, MENU_START_TEXT, "start", GREEN, WHITE))
+        self.buttons.append(Button(WIDTH // 2 - QUITSTART_OFFSET, start_y + MENU_START_Y_OFFSET + MENU_BUTTON_GAP_Y, MENU_ACTION_WIDTH, MENU_ACTION_HEIGHT, MENU_QUIT_TEXT, "quit", RED, WHITE))
 
     def handle_menu_click(self, action):
         m = self.model
