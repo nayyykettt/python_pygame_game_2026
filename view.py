@@ -18,12 +18,12 @@ class GameView:
     def __init__(self, screen):
         self.screen = screen
         try:
-            self.font = pygame.font.SysFont("arial", 40)
-            self.large_font = pygame.font.SysFont("arial", 65)
-            self.active_font = pygame.font.SysFont("arial", 90, bold=True)
-            self.menu_font = pygame.font.SysFont("arial", 32)
+            self.font = pygame.font.SysFont("arial", FONT_SIZE)
+            self.large_font = pygame.font.SysFont("arial", LARGE_FONT_SIZE)
+            self.active_font = pygame.font.SysFont("arial", ACTIVE_FONT_SIZE, bold=True)
+            self.menu_font = pygame.font.SysFont("arial", MENU_FONT_SIZE)
         except:
-            self.font, self.large_font, self.active_font, self.menu_font = [pygame.font.Font(None, s) for s in (40, 65, 90, 32)]
+            self.font, self.large_font, self.active_font, self.menu_font = [pygame.font.Font(None, s) for s in (FONT_SIZE, LARGE_FONT_SIZE, ACTIVE_FONT_SIZE, MENU_FONT_SIZE)]
         self.tex_player = load_image(TEX_PLAYER, (PLAYER_SIZE*PROPORTIONAL_COEFFICIENT, PLAYER_SIZE*PROPORTIONAL_COEFFICIENT))
         self.tex_obstacle = load_image(TEX_OBSTACLE, (OBSTACLE_SIZE*PROPORTIONAL_COEFFICIENT, OBSTACLE_SIZE*PROPORTIONAL_COEFFICIENT))
         self.tex_zone_yellow = load_image(TEX_ZONE_YELLOW, (ZONE_WIDTH, ZONE_HEIGHT))
@@ -32,14 +32,14 @@ class GameView:
         
 
     def draw_button(self, btn):
-        pygame.draw.rect(self.screen, btn.bg_color, btn.rect, border_radius=5)
+        pygame.draw.rect(self.screen, btn.bg_color, btn.rect, border_radius=BUTTON_BORDER_RADIUS)
         txt = self.menu_font.render(btn.text, True, btn.text_color)
         self.screen.blit(txt, (btn.rect.x + (btn.rect.width - txt.get_width()) // 2, btn.rect.y + (btn.rect.height - txt.get_height()) // 2))
 
     def draw_menu(self, buttons, model):
         self.screen.fill(WHITE)
         title = self.large_font.render("НАСТРОЙКИ БАЛАНСА", True, BLACK)
-        self.screen.blit(title, (WIDTH // 2 - title.get_width() // 2, 30))
+        self.screen.blit(title, (WIDTH // 2 - title.get_width() // 2, MENU_Y))
 
         labels = [
             ("Уровень сложности:", DIFFICULTY_NAMES[model.diff_idx]),
@@ -51,7 +51,7 @@ class GameView:
             ("Ритм режим:", "ВКЛ" if model.rhythm_mode else "ВЫКЛ")
         ]
 
-        start_y = 130
+        start_y = MENU_START_Y
         for i, (lbl_txt, val_txt) in enumerate(labels):
             y = start_y + i * 65
             lbl = self.menu_font.render(lbl_txt, True, BLACK)

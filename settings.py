@@ -5,6 +5,16 @@ infoObject = pygame.display.Info()
 WIDTH, HEIGHT = infoObject.current_w, infoObject.current_h
 FPS = 60
 
+START_Y = 130
+MENU_START_Y = 130
+
+FONT_SIZE = 40
+LARGE_FONT_SIZE = 65
+ACTIVE_FONT_SIZE = 90
+MENU_FONT_SIZE = 32
+BUTTON_BORDER_RADIUS = 5
+MENU_Y = 40
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GRAY = (150, 150, 150)
