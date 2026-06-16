@@ -114,7 +114,7 @@ class GameView:
 
         wm = model.word_manager
         words_y = WORDS_Y
-        current_x = WIDTH // 2 - sum([self.large_font.size(w)[0] + 20 for w in wm.words]) // 2
+        current_x = WIDTH // 2 - sum([self.large_font.size(w)[0] + WORDS_SPACING_X for w in wm.words]) // 2
         
         for i, word in enumerate(wm.words):
             if i == 0:
@@ -122,28 +122,28 @@ class GameView:
                     font = self.active_font if j == wm.current_idx else self.large_font
                     color = wm.char_colors[j]
                     surf = font.render(char, True, color)
-                    self.screen.blit(surf, (current_x, words_y - (20 if j == wm.current_idx else 0)))
+                    self.screen.blit(surf, (current_x, words_y - (CHAR_UP if j == wm.current_idx else 0)))
                     current_x += font.size(char)[0]
             else:
                 surf = self.large_font.render(word, True, GRAY)
                 self.screen.blit(surf, (current_x, words_y))
                 current_x += self.large_font.size(word)[0]
-            current_x += 20
+            current_x += WORDS_SPACING_X
 
     def draw_overlay(self, msg, sub_msg, color):
         overlay = pygame.Surface((WIDTH, HEIGHT))
-        overlay.set_alpha(200)
+        overlay.set_alpha(OVERLAY_ALPHA)
         overlay.fill(WHITE)
         self.screen.blit(overlay, (0, 0))
         
         t1 = self.large_font.render(msg, True, color)
         t2 = self.font.render(sub_msg, True, BLACK)
-        self.screen.blit(t1, (WIDTH // 2 - t1.get_width() // 2, HEIGHT // 2 - 50))
-        self.screen.blit(t2, (WIDTH // 2 - t2.get_width() // 2, HEIGHT // 2 + 50))
+        self.screen.blit(t1, (WIDTH // 2 - t1.get_width() // 2, HEIGHT // 2 - OVERLAY_SPACE))
+        self.screen.blit(t2, (WIDTH // 2 - t2.get_width() // 2, HEIGHT // 2 + OVERLAY_SPACE))
 
     def draw_game_over(self, model):
         overlay = pygame.Surface((WIDTH, HEIGHT))
-        overlay.set_alpha(230)
+        overlay.set_alpha(OVERLAY_ALPHA2)
         overlay.fill(WHITE)
         self.screen.blit(overlay, (0, 0))
         
@@ -151,11 +151,12 @@ class GameView:
         color = GREEN if model.is_victory else RED
         
         t1 = self.large_font.render(msg, True, color)
-        self.screen.blit(t1, (WIDTH // 2 - t1.get_width() // 2, HEIGHT // 2 - 180))
+        self.screen.blit(t1, (WIDTH // 2 - t1.get_width() // 2, HEIGHT // 2 - GAME_END_SPACE))
         
         total_time_sec = int(model.total_time)
         wrong_chars = model.word_manager.wrong_chars
         correct_chars = max(0, model.word_manager.total_chars - wrong_chars)
+        # Это не относится к магическим числам ибо слишком нативно
         time_minutes = model.total_time / 60.0
         cpm = int(correct_chars / time_minutes) if time_minutes > 0 else 0
         
@@ -167,7 +168,7 @@ class GameView:
         
         for i, line in enumerate(stats_lines):
             stat_surf = self.font.render(line, True, BLACK)
-            self.screen.blit(stat_surf, (WIDTH // 2 - stat_surf.get_width() // 2, HEIGHT // 2 - 40 + i * 45))
+            self.screen.blit(stat_surf, (WIDTH // 2 - stat_surf.get_width() // 2, HEIGHT // 2 - STATS_OFFSET + i * STATS_SPACE + STATS_OFFSET))
             
         sub_txt = self.menu_font.render("Нажмите R / ENTER для рестарта | ESC для меню", True, DARK_GRAY)
-        self.screen.blit(sub_txt, (WIDTH // 2 - sub_txt.get_width() // 2, HEIGHT // 2 + 130))
+        self.screen.blit(sub_txt, (WIDTH // 2 - sub_txt.get_width() // 2, HEIGHT // 2 + RESTART_OFFSET))
