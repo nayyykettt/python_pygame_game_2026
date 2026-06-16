@@ -109,11 +109,11 @@ class GameView:
 
         hp_txt = self.font.render(f"Здоровье: {max(0, model.hp):.1f}", True, BLACK)
         g_txt = self.font.render(f"Золото: {model.gold}/{TARGET_GOLD}", True, YELLOW)
-        self.screen.blit(hp_txt, (40, HEIGHT - 175))
-        self.screen.blit(g_txt, (40 + hp_txt.get_width() + 40, HEIGHT - 175))
+        self.screen.blit(hp_txt, CORD_HPBAR)
+        self.screen.blit(g_txt, CORD_GOLD)
 
         wm = model.word_manager
-        words_y = HEIGHT - 110
+        words_y = WORDS_Y
         current_x = WIDTH // 2 - sum([self.large_font.size(w)[0] + 20 for w in wm.words]) // 2
         
         for i, word in enumerate(wm.words):
