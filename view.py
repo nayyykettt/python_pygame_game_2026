@@ -53,14 +53,14 @@ class GameView:
 
         start_y = MENU_START_Y
         for i, (lbl_txt, val_txt) in enumerate(labels):
-            y = start_y + i * 65
+            y = start_y + i * MENU_SPASING_Y
             lbl = self.menu_font.render(lbl_txt, True, BLACK)
             val = self.menu_font.render(val_txt, True, PLAYER_BLUE)
             
-            self.screen.blit(lbl, (WIDTH // 2 - 380, y + 5))
+            self.screen.blit(lbl, (WIDTH // 2 - MENU_LABEL_OFFSET_X, y + MENU_VERTICAL_OFFSET))
             
-            center_x = WIDTH // 2 + 220
-            self.screen.blit(val, (center_x - val.get_width() // 2, y + 5))
+            center_x = WIDTH // 2 + SETTINGS_HORIZONTAL_OFFSET
+            self.screen.blit(val, (center_x - val.get_width() // 2, y + MENU_VERTICAL_OFFSET))
 
         for btn in buttons:
             self.draw_button(btn)
@@ -73,12 +73,11 @@ class GameView:
         
         if model.rhythm_mode:
             rhythm_txt = self.font.render("РИТМ-РЕЖИМ", True, PLAYER_BLUE)
-            self.screen.blit(rhythm_txt, (40, 40))
+            self.screen.blit(rhythm_txt, RYTM_CORD)
         
-        pygame.draw.line(self.screen, BLACK, (0, GROUND_Y), (WIDTH, GROUND_Y), 5)
+        pygame.draw.line(self.screen, BLACK, (0, GROUND_Y), (WIDTH, GROUND_Y), GROUND_LINE_SIZE)
 
         for pit in model.pits:
-            pygame.draw.rect(self.screen, PURPLE, (pit.rect.left, GROUND_Y - 5, pit.rect.width, 10))
             for i in range(pit.rect.width // 20):
                 px = pit.rect.left + i * 20
                 pygame.draw.polygon(self.screen, PURPLE, [(px, GROUND_Y + 40), (px + 10, GROUND_Y + 15), (px + 20, GROUND_Y + 40)])
