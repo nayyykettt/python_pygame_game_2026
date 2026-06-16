@@ -78,12 +78,12 @@ class GameView:
         pygame.draw.line(self.screen, BLACK, (0, GROUND_Y), (WIDTH, GROUND_Y), GROUND_LINE_SIZE)
 
         for pit in model.pits:
-            for i in range(pit.rect.width // 20):
-                px = pit.rect.left + i * 20
-                pygame.draw.polygon(self.screen, PURPLE, [(px, GROUND_Y + 40), (px + 10, GROUND_Y + 15), (px + 20, GROUND_Y + 40)])
+            for i in range(pit.rect.width // THORN_WIDTH):
+                px = pit.rect.left + i * THORN_WIDTH
+                pygame.draw.polygon(self.screen, PURPLE, [(px, GROUND_Y + (THORN_HEIGHT + THORN_DEEP)), (px + THORN_WIDTH//2, (GROUND_Y + THORN_DEEP)), (px + THORN_WIDTH, GROUND_Y + (THORN_HEIGHT + THORN_DEEP))])
         
         for p in model.platforms:
-            pygame.draw.rect(self.screen, LIGHT_GRAY, p.rect, border_radius=20)
+            pygame.draw.rect(self.screen, LIGHT_GRAY, p.rect, border_radius=PLATFORM_BORDER_RADIUS)
         
         for z in model.zones:
             tex = self.tex_zone_yellow if z.zone_type == "yellow" else self.tex_zone_blue
