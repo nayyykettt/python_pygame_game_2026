@@ -137,7 +137,7 @@ class LevelGenerator:
         chunk_width = 0
 
         x_start = WIDTH + SPAWN_OFFSET_X
-
+        
         if selected == "ground_rush":
             length = random.randint(400, 1000)
             chunk_width = length
