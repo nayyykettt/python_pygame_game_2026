@@ -29,7 +29,8 @@ class GameView:
         self.tex_zone_yellow = load_image(TEX_ZONE_YELLOW, (ZONE_WIDTH, ZONE_HEIGHT))
         self.tex_zone_blue = load_image(TEX_ZONE_BLUE, (ZONE_WIDTH, ZONE_HEIGHT))
         self.tex_bg = load_image(TEX_BG, (WIDTH, HEIGHT))
-        
+        self.tex_hp = load_image(TEX_HP, (HEAL_TEX_SIZE, HEAL_TEX_SIZE))
+        self.tex_thorn = load_image(TEX_THORN, (THORN_WIDTH, THORN_HEIGHT + THORN_DEEP))
 
     def draw_button(self, btn):
         pygame.draw.rect(self.screen, btn.bg_color, btn.rect, border_radius=BUTTON_BORDER_RADIUS)
@@ -80,7 +81,10 @@ class GameView:
         for pit in model.pits:
             for i in range(pit.rect.width // THORN_WIDTH):
                 px = pit.rect.left + i * THORN_WIDTH
-                pygame.draw.polygon(self.screen, PURPLE, [(px, GROUND_Y + (THORN_HEIGHT + THORN_DEEP)), (px + THORN_WIDTH//2, (GROUND_Y + THORN_DEEP)), (px + THORN_WIDTH, GROUND_Y + (THORN_HEIGHT + THORN_DEEP))])
+                if self.tex_thorn:
+                    self.screen.blit(self.tex_thorn, (px, GROUND_Y - GROUND_LINE_SIZE))
+                else:
+                    pygame.draw.polygon(self.screen, PURPLE, [(px, GROUND_Y + (THORN_HEIGHT + THORN_DEEP)), (px + THORN_WIDTH//2, (GROUND_Y + THORN_DEEP)), (px + THORN_WIDTH, GROUND_Y + (THORN_HEIGHT + THORN_DEEP))])
         
         for p in model.platforms:
             pygame.draw.rect(self.screen, LIGHT_GRAY, p.rect, border_radius=PLATFORM_BORDER_RADIUS)
@@ -100,7 +104,10 @@ class GameView:
                 pygame.draw.rect(self.screen, RED, o.rect)
         
         for h in model.heals:
-            pygame.draw.rect(self.screen, GREEN, h.rect)
+            if self.tex_hp:
+                self.screen.blit(self.tex_hp, h.rect)
+            else:
+                pygame.draw.rect(self.screen, GREEN, h.rect)
         
         if self.tex_player:
             self.screen.blit(self.tex_player, model.player.rect)
@@ -156,7 +163,6 @@ class GameView:
         total_time_sec = int(model.total_time)
         wrong_chars = model.word_manager.wrong_chars
         correct_chars = max(0, model.word_manager.total_chars - wrong_chars)
-        # Это не относится к магическим числам ибо слишком нативно
         time_minutes = model.total_time / 60.0
         cpm = int(correct_chars / time_minutes) if time_minutes > 0 else 0
         
