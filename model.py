@@ -193,7 +193,11 @@ class LevelGenerator:
 
         self.distance_since_last = -chunk_width
         min_d, max_d = OBSTACLE_DISTANCE_RANGES[diff_idx]
-        self.next_dist = random.randint(max(int(max_jump_dist) + SPAWN_RESET_OFFSET, min_d), max_d)
+        lower_bound = max(int(max_jump_dist) + SPAWN_RESET_OFFSET, min_d)
+        if lower_bound >= max_d:
+            self.next_dist = lower_bound
+        else:
+            self.next_dist = random.randint(lower_bound, max_d)
 
 class GameModel:
     def __init__(self):
