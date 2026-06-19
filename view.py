@@ -14,6 +14,42 @@ def load_image(path, size=None):
         return None
 
 
+def load_sound(path, volume=SOUND_VOLUME_DEFAULT):
+    try:
+        sound = pygame.mixer.Sound(path)
+        sound.set_volume(volume)
+        return sound
+    except pygame.error as e:
+        print(f"[WARNING] Не удалось загрузить звук {path}: {e}")
+        return None
+
+
+class SoundManager:
+    def __init__(self):
+        try:
+            pygame.mixer.init()
+        except pygame.error:
+            pass
+        self.sounds = {
+            "jump": load_sound(SOUND_JUMP),
+            "coin": load_sound(SOUND_COIN),
+            "damage": load_sound(SOUND_DAMAGE),
+            "win": load_sound(SOUND_WIN),
+            "lose": load_sound(SOUND_LOSE),
+        }
+        self.enabled = True
+
+    def play(self, sound_name):
+        if self.enabled and sound_name in self.sounds:
+            sound = self.sounds[sound_name]
+            if sound:
+                sound.play()
+
+    def toggle(self):
+        self.enabled = not self.enabled
+        return self.enabled
+
+
 class GameView:
     def __init__(self, screen):
         self.screen = screen
@@ -31,6 +67,7 @@ class GameView:
         self.tex_bg = load_image(TEX_BG, (WIDTH, HEIGHT))
         self.tex_hp = load_image(TEX_HP, (HEAL_TEX_SIZE, HEAL_TEX_SIZE))
         self.tex_thorn = load_image(TEX_THORN, (THORN_WIDTH, THORN_HEIGHT + THORN_DEEP))
+        self.sound_manager = SoundManager()
 
     def draw_button(self, btn):
         pygame.draw.rect(self.screen, btn.bg_color, btn.rect, border_radius=BUTTON_BORDER_RADIUS)
@@ -57,9 +94,9 @@ class GameView:
             y = start_y + i * MENU_SPASING_Y
             lbl = self.menu_font.render(lbl_txt, True, BLACK)
             val = self.menu_font.render(val_txt, True, PLAYER_BLUE)
-            
+
             self.screen.blit(lbl, (WIDTH // 2 - MENU_LABEL_OFFSET_X, y + MENU_VERTICAL_OFFSET))
-            
+
             center_x = WIDTH // 2 + SETTINGS_HORIZONTAL_OFFSET
             self.screen.blit(val, (center_x - val.get_width() // 2, y + MENU_VERTICAL_OFFSET))
 
@@ -71,11 +108,11 @@ class GameView:
             self.screen.blit(self.tex_bg, (0, 0))
         else:
             self.screen.fill(WHITE)
-        
+
         if model.rhythm_mode:
             rhythm_txt = self.font.render("РИТМ-РЕЖИМ", True, PLAYER_BLUE)
             self.screen.blit(rhythm_txt, RYTM_CORD)
-        
+
         pygame.draw.line(self.screen, BLACK, (0, GROUND_Y), (WIDTH, GROUND_Y), GROUND_LINE_SIZE)
 
         for pit in model.pits:
@@ -85,10 +122,10 @@ class GameView:
                     self.screen.blit(self.tex_thorn, (px, GROUND_Y - GROUND_LINE_SIZE))
                 else:
                     pygame.draw.polygon(self.screen, PURPLE, [(px, GROUND_Y + (THORN_HEIGHT + THORN_DEEP)), (px + THORN_WIDTH//2, (GROUND_Y + THORN_DEEP)), (px + THORN_WIDTH, GROUND_Y + (THORN_HEIGHT + THORN_DEEP))])
-        
+
         for p in model.platforms:
             pygame.draw.rect(self.screen, LIGHT_GRAY, p.rect, border_radius=PLATFORM_BORDER_RADIUS)
-        
+
         for z in model.zones:
             tex = self.tex_zone_yellow if z.zone_type == "yellow" else self.tex_zone_blue
             if tex:
@@ -96,19 +133,19 @@ class GameView:
             else:
                 color = YELLOW if z.zone_type == "yellow" else CYAN_ZONE
                 pygame.draw.rect(self.screen, color, z.rect)
-        
+
         for o in model.obstacles:
             if self.tex_obstacle:
                 self.screen.blit(self.tex_obstacle, o.rect)
             else:
                 pygame.draw.rect(self.screen, RED, o.rect)
-        
+
         for h in model.heals:
             if self.tex_hp:
                 self.screen.blit(self.tex_hp, h.rect)
             else:
                 pygame.draw.rect(self.screen, GREEN, h.rect)
-        
+
         if self.tex_player:
             self.screen.blit(self.tex_player, model.player.rect)
         else:
@@ -122,7 +159,7 @@ class GameView:
         wm = model.word_manager
         words_y = WORDS_Y
         current_x = WIDTH // 2 - sum([self.large_font.size(w)[0] + WORDS_SPACING_X for w in wm.words]) // 2
-        
+
         for i, word in enumerate(wm.words):
             if i == 0:
                 for j, char in enumerate(word):
@@ -142,7 +179,7 @@ class GameView:
         overlay.set_alpha(OVERLAY_ALPHA)
         overlay.fill(WHITE)
         self.screen.blit(overlay, (0, 0))
-        
+
         t1 = self.large_font.render(msg, True, color)
         t2 = self.font.render(sub_msg, True, BLACK)
         self.screen.blit(t1, (WIDTH // 2 - t1.get_width() // 2, HEIGHT // 2 - OVERLAY_SPACE))
@@ -153,28 +190,28 @@ class GameView:
         overlay.set_alpha(OVERLAY_ALPHA2)
         overlay.fill(WHITE)
         self.screen.blit(overlay, (0, 0))
-        
+
         msg = "ПОБЕДА!" if model.is_victory else "ПОРАЖЕНИЕ"
         color = GREEN if model.is_victory else RED
-        
+
         t1 = self.large_font.render(msg, True, color)
         self.screen.blit(t1, (WIDTH // 2 - t1.get_width() // 2, HEIGHT // 2 - GAME_END_SPACE))
-        
+
         total_time_sec = int(model.total_time)
         wrong_chars = model.word_manager.wrong_chars
         correct_chars = max(0, model.word_manager.total_chars - wrong_chars)
         time_minutes = model.total_time / 60.0
         cpm = int(correct_chars / time_minutes) if time_minutes > 0 else 0
-        
+
         stats_lines = [
             f"Время в игре: {total_time_sec} сек.",
             f"Скорость ввода: {cpm} симв/мин.",
             f"Количество ошибок: {wrong_chars}"
         ]
-        
+
         for i, line in enumerate(stats_lines):
             stat_surf = self.font.render(line, True, BLACK)
             self.screen.blit(stat_surf, (WIDTH // 2 - stat_surf.get_width() // 2, HEIGHT // 2 - STATS_OFFSET + i * STATS_SPACE + STATS_OFFSET))
-            
+
         sub_txt = self.menu_font.render("Нажмите R / ENTER для рестарта | ESC для меню", True, DARK_GRAY)
         self.screen.blit(sub_txt, (WIDTH // 2 - sub_txt.get_width() // 2, HEIGHT // 2 + RESTART_OFFSET))

@@ -22,7 +22,7 @@ class Player(GameObject):
 
     def update_physics(self, platforms):
         self.rect.y += self.velocity_y
-        
+
         if self.velocity_y < 0:
             for plat in platforms:
                 if self.rect.colliderect(plat.rect):
@@ -32,7 +32,7 @@ class Player(GameObject):
 
         self.velocity_y += GRAVITY
         current_floor = GROUND_Y
-        
+
         for plat in platforms:
             if self.rect.right > plat.rect.left and self.rect.left < plat.rect.right:
                 if self.rect.bottom - self.velocity_y - GRAVITY <= plat.rect.top + PLATFORM_EXT_SIZE:
@@ -76,18 +76,18 @@ class WordManager:
     def process_input(self, char_typed, diff_idx) -> bool:
         if char_typed not in RUSSIAN_ALPHABET:
             return False
-            
+
         self.total_chars += 1
         target = self.words[0][self.current_idx].lower()
         damage_taken = False
-        
+
         if char_typed == target:
             self.char_colors[self.current_idx] = GREEN
         else:
             self.char_colors[self.current_idx] = RED
             self.wrong_chars += 1
             damage_taken = True
-            
+
         self.current_idx += 1
         return damage_taken
 
@@ -113,23 +113,23 @@ class LevelGenerator:
     def _spawn_random_zone(self, model, start_x, width, base_y, diff_idx, chance=ZONE_CHANCE_EASY):
         if random.random() > chance or width < ZONE_WIDTH + ZONE_WIDTH_SPAWN:
             return
-            
+
         zx = start_x + random.randint(ZONE_MIN_PADDING_X, width - ZONE_WIDTH - ZONE_MIN_PADDING_X)
         zy = base_y - ZONE_HEIGHT 
-        
+
         z_type = "yellow"
         if diff_idx == 2:
             z_type = random.choices(["yellow", "blue"], weights=[ZONE_WEIGHT_YELLOW, ZONE_WEIGHT_BLUE])[0]
-        
+
         if diff_idx == 3:
             z_type = random.choices(["yellow", "blue"], weights=[ZONE_WEIGHT_YELLOW_FUN, ZONE_WEIGHT_BLUE_FUN])[0]
-            
+
         model.zones.append(Zone(zx, zy, ZONE_WIDTH, ZONE_HEIGHT, z_type))
 
     def _spawn_heal(self, model, start_x, width, base_y):
         if random.random() > HEAL_CHANCE or width < HEAL_SIZE + HEAL_MIN_PADDING_X * 2:
             return
-            
+
         hx = start_x + random.randint(HEAL_MIN_PADDING_X, width - HEAL_SIZE - HEAL_MIN_PADDING_X)
         hy = base_y - HEAL_SIZE - random.randint(0, HEAL_SPAWN_HEIGHT_VARIATION)
         model.heals.append(HealItem(hx, hy, HEAL_SIZE, HEAL_SIZE))
@@ -141,7 +141,7 @@ class LevelGenerator:
 
         jump_frames = (2 * abs(JUMP_VELOCITY_START)) / GRAVITY
         max_jump_dist = jump_frames * speed
-        
+
         chunk_types = ["ground_rush", "random_platforms", "pit"]
         weights = CHUNK_WEIGHTS_EASY if diff_idx == 0 else CHUNK_WEIGHTS_HARD
         selected = random.choices(chunk_types, weights=weights)[0]
@@ -152,13 +152,13 @@ class LevelGenerator:
         if selected == "ground_rush":
             length = random.randint(GROUND_MIN_LENGTH, GROUND_MAX_LENGTH)
             chunk_width = length
-            
+
             if diff_idx != 0:
                 obs_count = random.randint(1, max(1, length // GROUND_OBSTACLE_DENSITY))
                 for _ in range(obs_count):
                     ox = x_start + random.randint(OBS_SPAWN_MIN_OFFSET, length - OBSTACLE_SIZE - OBS_PADDING_GROUND)
                     model.obstacles.append(Obstacle(ox, GROUND_Y - OBSTACLE_SIZE, OBSTACLE_SIZE, OBSTACLE_SIZE))
-            
+
             for _ in range(random.randint(1, 2)):
                 self._spawn_random_zone(model, x_start, length, GROUND_Y, diff_idx, chance=ZONE_CHANCE_RUSH)
 
@@ -167,23 +167,23 @@ class LevelGenerator:
         elif selected == "random_platforms":
             num_plats = random.randint(PLAT_MIN_COUNT, PLAT_MAX_COUNT)
             current_x = x_start
-            
+
             for _ in range(num_plats):
                 plat_w = random.randint(PLAT_MIN_WIDTH, PLAT_MAX_WIDTH)
                 plat_y = GROUND_Y - random.randint(PLAT_MIN_HEIGHT, PLAT_MAX_HEIGHT)
-                
+
                 model.platforms.append(Platform(current_x, plat_y, plat_w, PLAT_THICKNESS))
-                
+
                 if diff_idx != 0 and plat_w > PLAT_MIN_OBSTACLE and random.random() < PLAT_OBSTACLE_CHANCE:
                     ox = current_x + random.randint(PLAT_OBSTACLE_PADDING, plat_w - OBSTACLE_SIZE - PLAT_OBSTACLE_PADDING)
                     model.obstacles.append(Obstacle(ox, plat_y - OBSTACLE_SIZE, OBSTACLE_SIZE, OBSTACLE_SIZE))
-                
+
                 self._spawn_random_zone(model, current_x, plat_w, plat_y, diff_idx, chance=ZONE_CHANCE_PLAT)
                 self._spawn_heal(model, current_x, plat_w, plat_y)
-                
+
                 gap = random.randint(GAP_MIN, int(max_jump_dist * GAP_MAX_FACTOR))
                 current_x += plat_w + gap
-            
+
             chunk_width = current_x - x_start
 
         elif selected == "pit":
@@ -212,7 +212,7 @@ class GameModel:
         self.player = Player(PLAYER_START_X, GROUND_Y - PLAYER_SIZE, PLAYER_SIZE)
         self.word_manager = WordManager()
         self.generator = LevelGenerator()
-        
+
         self.reset_state()
 
     def reset_state(self):
@@ -222,13 +222,14 @@ class GameModel:
         self.is_victory = False
         self.start_time = time.time()
         self.total_time = 0
-        
+        self.coin_collected = False
+
         self.platforms = []
         self.obstacles = []
         self.pits = []
         self.zones = []
         self.heals = []
-        
+
         self.player = Player(PLAYER_START_X, PLAYER_START_Y, PLAYER_SIZE)
         self.word_manager = WordManager()
         self.word_manager.init_words(self.diff_idx)
@@ -243,7 +244,7 @@ class GameModel:
 
         self.player.update_physics(self.platforms)
         self.generator.generate_chunk(self, speed, self.diff_idx)
-        
+
         self._move_objects(speed)
         self._check_collisions()
         self._check_game_over()
@@ -275,6 +276,8 @@ class GameModel:
             if self.player.rect.colliderect(zone.rect):
                 self.gold += self.yellow_gold if zone.zone_type == "yellow" else -self.blue_gold
                 self.gold = max(0, min(TARGET_GOLD, self.gold))
+                if zone.zone_type == "yellow":
+                    self.coin_collected = True
                 self.zones.remove(zone)
 
     def _check_game_over(self):

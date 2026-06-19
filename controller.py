@@ -23,7 +23,7 @@ class GameController:
     def setup_menu_buttons(self):
         self.buttons = []
         start_y = START_Y
-        
+
         actions = ["diff", "y_gold", "b_gold", "c_dmg", "o_dmg", "heal", "rhythm"]
         for i, act in enumerate(actions):
             y = start_y + i * MENU_SPASING_Y
@@ -77,14 +77,17 @@ class GameController:
                         self.state = "MENU"
                     elif event.key == pygame.K_SPACE and self.model.rhythm_mode:
                         self.model.player.jump(JUMP)
+                        self.view.sound_manager.play("jump")
                     elif event.unicode:
                         took_dmg = self.model.word_manager.process_input(event.unicode.lower(), self.model.diff_idx)
                         if took_dmg and self.model.diff_idx != 0:
                             self.model.hp -= self.model.char_dmg
-                        
+                            self.view.sound_manager.play("damage")
+
                         if self.model.word_manager.check_word_completion(self.model.diff_idx):
                             if not self.model.rhythm_mode:
                                 self.model.player.jump(JUMP)
+                                self.view.sound_manager.play("jump")
 
             elif self.state == "GAME_OVER":
                 if event.type == pygame.KEYDOWN and event.key in (pygame.K_RETURN, pygame.K_r):
@@ -97,8 +100,15 @@ class GameController:
         self.process_events()
         if self.state == "PLAYING":
             self.model.update()
+            if self.model.coin_collected:
+                self.view.sound_manager.play("coin")
+                self.model.coin_collected = False
             if self.model.game_over:
                 self.state = "GAME_OVER"
+                if self.model.is_victory:
+                    self.view.sound_manager.play("win")
+                else:
+                    self.view.sound_manager.play("lose")
 
     def render(self):
         if self.state == "MENU":
@@ -109,5 +119,5 @@ class GameController:
                 self.view.draw_overlay("Готов?", "Нажмите любую кнопку", BLACK)
             elif self.state == "GAME_OVER":
                 self.view.draw_game_over(self.model)
-        
+
         pygame.display.flip()
