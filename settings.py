@@ -209,3 +209,5 @@ SOUND_LOSE = f"{SOUND_DIR}/lose.wav"
 SOUND_OBSTACLE = f"{SOUND_DIR}/obstacle.wav"
 
 SOUND_VOLUME_DEFAULT = 0.5
+
+FONT_PATH = "fonts/Roboto-VariableFont_wdth,wght.ttf"

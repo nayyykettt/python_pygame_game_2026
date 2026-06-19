@@ -36,7 +36,7 @@ class SoundManager:
             "damage": load_sound(SOUND_DAMAGE),
             "win": load_sound(SOUND_WIN),
             "lose": load_sound(SOUND_LOSE),
-            "obstacle": load_sound(SOUND_OBSTACLE),
+            "obstacle": load_sound(SOUND_OBSTACLE)
         }
         self.enabled = True
 
