@@ -206,5 +206,6 @@ SOUND_COIN = f"{SOUND_DIR}/coin.ogg"
 SOUND_DAMAGE = f"{SOUND_DIR}/damage.wav"
 SOUND_WIN = f"{SOUND_DIR}/win.wav"
 SOUND_LOSE = f"{SOUND_DIR}/lose.wav"
+SOUND_OBSTACLE = f"{SOUND_DIR}/obstacle.wav"
 
 SOUND_VOLUME_DEFAULT = 0.5

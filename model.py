@@ -223,6 +223,7 @@ class GameModel:
         self.start_time = time.time()
         self.total_time = 0
         self.coin_collected = False
+        self.obstacle_hit = False
 
         self.platforms = []
         self.obstacles = []
@@ -265,6 +266,7 @@ class GameModel:
             if self.player.rect.colliderect(obs.rect):
                 if self.diff_idx == INSTANT_DEATH_IDX: self.hp = 0
                 elif self.diff_idx != NO_DAMAGE_IDX: self.hp -= self.obs_dmg
+                self.obstacle_hit = True
                 self.obstacles.remove(obs)
 
         for heal in self.heals[:]:

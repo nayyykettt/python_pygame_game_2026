@@ -100,6 +100,9 @@ class GameController:
         self.process_events()
         if self.state == "PLAYING":
             self.model.update()
+            if self.model.obstacle_hit:
+                self.view.sound_manager.play("obstacle")
+                self.model.obstacle_hit = False
             if self.model.coin_collected:
                 self.view.sound_manager.play("coin")
                 self.model.coin_collected = False
