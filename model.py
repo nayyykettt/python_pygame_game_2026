@@ -166,7 +166,7 @@ class LevelGenerator:
         if selected == "ground_rush":
             length = random.randint(GROUND_MIN_LENGTH, GROUND_MAX_LENGTH)
             chunk_width = length
-
+            #заборы
             if diff_idx != 0:
                 obs_count = random.randint(1, max(1, length // GROUND_OBSTACLE_DENSITY))
                 for _ in range(obs_count):
@@ -204,10 +204,12 @@ class LevelGenerator:
             pit_w = random.randint(PIT_MIN_WIDTH, int(max_jump_dist * PIT_MAX_FACTOR))
             model.pits.append(Pit(x_start, GROUND_Y, pit_w, PIT_HEIGHT))
             chunk_width = pit_w
-
+        #сброс счетчика
         self.distance_since_last = -chunk_width
         min_d, max_d = OBSTACLE_DISTANCE_RANGES[diff_idx]
         lower_bound = max(int(max_jump_dist) + SPAWN_RESET_OFFSET, min_d)
+
+        #дистанция до след чанка
         if lower_bound >= max_d:
             self.next_dist = lower_bound
         else:
@@ -229,7 +231,7 @@ class GameModel:
 
         self.reset_state()
 
-    #Алгоритм
+    #Алгоритм сброса харк
     def reset_state(self):
         self.hp = MAX_HP
         self.gold = START_GOLD
@@ -251,7 +253,7 @@ class GameModel:
         self.word_manager.init_words(self.diff_idx)
         self.generator.reset(self.diff_idx)
 
-    #Алгоритм
+    #Алгоритм обновление скорости, физики, колизий и прочего.
     def update(self):
         if self.game_over: return
 
@@ -266,7 +268,7 @@ class GameModel:
         self._check_collisions()
         self._check_game_over()
 
-    #Алгоритм
+    #Алгоритм псведо движения
     def _move_objects(self, speed):
         for obj_list in [self.platforms, self.pits, self.obstacles, self.heals, self.zones]:
             for obj in obj_list[:]:
@@ -274,16 +276,19 @@ class GameModel:
                 if obj.rect.right < 0:
                     obj_list.remove(obj)
 
-    #Алгоритм
+    #Алгоритм коллизий
     def _check_collisions(self):
         for pit in self.pits:
             if pit.rect.left + PIT_COLLISION_MARGIN < self.player.rect.centerx < pit.rect.right - PIT_COLLISION_MARGIN:
-                if self.player.rect.bottom >= GROUND_Y: self.hp = 0
+                if self.player.rect.bottom >= GROUND_Y: 
+                    self.hp = 0
 
         for obs in self.obstacles[:]:
             if self.player.rect.colliderect(obs.rect):
-                if self.diff_idx == INSTANT_DEATH_IDX: self.hp = 0
-                elif self.diff_idx != NO_DAMAGE_IDX: self.hp -= self.obs_dmg
+                if self.diff_idx == INSTANT_DEATH_IDX:
+                    self.hp = 0
+                elif self.diff_idx != NO_DAMAGE_IDX: 
+                    self.hp -= self.obs_dmg
                 self.obstacle_hit = True
                 self.obstacles.remove(obs)
 
@@ -300,7 +305,7 @@ class GameModel:
                     self.coin_collected = True
                 self.zones.remove(zone)
 
-    #Алгоритм
+    #Алгоритм конца
     def _check_game_over(self):
         if self.hp <= 0 or self.gold >= TARGET_GOLD:
             self.game_over = True
