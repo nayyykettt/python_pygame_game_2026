@@ -4,7 +4,7 @@ from model import GameModel
 from view import GameView
 from controller import GameController
 
-
+#Инициализация Экрана и игры
 def main():
     screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     pygame.display.set_caption("Typing Dino MVC")

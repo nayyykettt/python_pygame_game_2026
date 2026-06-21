@@ -1,5 +1,6 @@
 import pygame
 pygame.init()
+#Константы, магические числа, загрузки, цвета и прочее
 
 infoObject = pygame.display.Info()
 WIDTH, HEIGHT = infoObject.current_w, infoObject.current_h
@@ -125,7 +126,7 @@ PLAT_MAX_COUNT = 6
 PLAT_MIN_WIDTH = 200
 PLAT_MAX_WIDTH = 600
 PLAT_MIN_HEIGHT = 60
-PLAT_MAX_HEIGHT = 150
+PLAT_MAX_HEIGHT = 220
 PLAT_THICKNESS = 20
 PLAT_OBSTACLE_CHANCE = 0.35
 PLAT_MIN_OBSTACLE = 300
@@ -211,3 +212,45 @@ SOUND_OBSTACLE = f"{SOUND_DIR}/obstacle.wav"
 SOUND_VOLUME_DEFAULT = 0.5
 
 FONT_PATH = "fonts/Roboto-VariableFont_wdth,wght.ttf"
+
+TEST_OBJ_SIZE = 50
+TEST_OBJ_SIZE_SMALL = 10
+TEST_MOVE_SPEED = 10
+TEST_MOVE_SPEED_SMALL = 5
+TEST_ZERO_SPEED = 0
+TEST_PLAYER_POS_X = 100
+TEST_PLAYER_POS_Y = 100
+TEST_JUMP_COUNT = 2
+TEST_GRAVITY_FRAMES = 2
+TEST_LARGE_DISTANCE = 999999
+TEST_PIT_OFFSET_LARGE = 999
+TEST_HP_OFFSET = 0.5
+TEST_WAIT_TIME = 0.01
+TEST_GOLD_AMOUNT = 1
+TEST_GOLD_AMOUNT_BLUE = 4
+TEST_GOLD_AMOUNT_PLUS = 6
+TEST_DAMAGE_BASE = 1.0
+TEST_DAMAGE_MINUS = 0.9
+TEST_DAMAGE_PLUS = 1.1
+TEST_TIME_TOTAL = 10.0
+TEST_TIME_TOTAL_SMALL = 5.0
+TEST_RECT_EDGE = 10
+TEST_RECT_OUTSIDE = 11
+TEST_BUTTON_ACTION = "my_action"
+TEST_BUTTON_TEXT = "Hello"
+TEST_BUTTON_TEXT_DEFAULT = "Test"
+TEST_ZONE_TYPE_YELLOW = "yellow"
+TEST_ZONE_TYPE_BLUE = "blue"
+TEST_ACTION_DIFF_MINUS = "diff_minus"
+TEST_ACTION_Y_GOLD_MINUS = "y_gold_minus"
+TEST_ACTION_B_GOLD_MINUS = "b_gold_minus"
+TEST_ACTION_C_DMG_MINUS = "c_dmg_minus"
+TEST_ACTION_O_DMG_MINUS = "o_dmg_minus"
+TEST_ACTION_HEAL_MINUS = "heal_minus"
+TEST_CHAR_WRONG = "ы"
+TEST_CHAR_NON_RUSSIAN = "a"
+TEST_OVERLAY_TITLE = "Test"
+TEST_OVERLAY_SUBTITLE = "Subtest"
+TEST_OVERLAY_COLOR = (0, 0, 0)
+TEST_WORDS_BANK_0 = ["вода", "небо", "луна", "стол", "стул", "рука", "нога", "глаз", "день", "ночь"]
+TEST_WORDS_BANK_1 = ["книга", "дверь", "дождь", "город", "рынок", "ведро", "птица", "актер", "океан", "трава"]

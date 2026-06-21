@@ -2,6 +2,7 @@ import random
 import time
 from settings import *
 
+#Базовый класс для объектов в игре.
 class GameObject:
     def __init__(self, x, y, width, height):
         self.rect = pygame.Rect(x, y, width, height)
@@ -9,6 +10,7 @@ class GameObject:
     def move(self, speed):
         self.rect.x -= speed
 
+#класс Игрока. 
 class Player(GameObject):
     def __init__(self, x, y, size):
         super().__init__(x, y, size, size)
@@ -20,9 +22,12 @@ class Player(GameObject):
             self.velocity_y = JUMP_VELOCITY_START
             self.jump_count += 1
 
+    #Алгоритм
     def update_physics(self, platforms):
+        #Передвигаем игрока по вертикали
         self.rect.y += self.velocity_y
 
+        #столкновение с платформой
         if self.velocity_y < 0:
             for plat in platforms:
                 if self.rect.colliderect(plat.rect):
@@ -32,13 +37,13 @@ class Player(GameObject):
 
         self.velocity_y += GRAVITY
         current_floor = GROUND_Y
-
+        #определяем находится ли игрок над платформой. Делаем её полом.
         for plat in platforms:
             if self.rect.right > plat.rect.left and self.rect.left < plat.rect.right:
                 if self.rect.bottom - self.velocity_y - GRAVITY <= plat.rect.top + PLATFORM_EXT_SIZE:
                     current_floor = plat.rect.top
                     break
-
+#Столкновение снизу
         if self.rect.bottom >= current_floor:
             self.rect.bottom = current_floor
             self.velocity_y = 0
@@ -67,12 +72,14 @@ class WordManager:
         self.wrong_chars = 0
         self.total_chars = 0
 
+#Алгоритм
     def init_words(self, diff_idx):
         bank = WORDS_BANK[diff_idx]
         self.words = [random.choice(bank) for _ in range(WORDS_IN_ROW_COUNT)]
         self.current_idx = 0
         self.char_colors = [GRAY] * len(self.words[0])
 
+#Алгоритм писанины
     def process_input(self, char_typed, diff_idx) -> bool:
         if char_typed not in RUSSIAN_ALPHABET:
             return False
@@ -91,6 +98,7 @@ class WordManager:
         self.current_idx += 1
         return damage_taken
 
+    #Алгоритм конца слова
     def check_word_completion(self, diff_idx) -> bool:
         if self.current_idx >= len(self.words[0]):
             self.words_typed += 1
@@ -110,6 +118,7 @@ class LevelGenerator:
         self.distance_since_last = 0
         self.next_dist = random.randint(*OBSTACLE_DISTANCE_RANGES[diff_idx])
 
+    #Алгоритм
     def _spawn_random_zone(self, model, start_x, width, base_y, diff_idx, chance=ZONE_CHANCE_EASY):
         if random.random() > chance or width < ZONE_WIDTH + ZONE_WIDTH_SPAWN:
             return
@@ -126,6 +135,7 @@ class LevelGenerator:
 
         model.zones.append(Zone(zx, zy, ZONE_WIDTH, ZONE_HEIGHT, z_type))
 
+    #Алгоритм
     def _spawn_heal(self, model, start_x, width, base_y):
         if random.random() > HEAL_CHANCE or width < HEAL_SIZE + HEAL_MIN_PADDING_X * 2:
             return
@@ -134,14 +144,17 @@ class LevelGenerator:
         hy = base_y - HEAL_SIZE - random.randint(0, HEAL_SPAWN_HEIGHT_VARIATION)
         model.heals.append(HealItem(hx, hy, HEAL_SIZE, HEAL_SIZE))
 
+    #Алгоритм
     def generate_chunk(self, model, speed, diff_idx):
         self.distance_since_last += speed
         if self.distance_since_last < self.next_dist:
             return
 
+        #расстояние за прыжок
         jump_frames = (2 * abs(JUMP_VELOCITY_START)) / GRAVITY
         max_jump_dist = jump_frames * speed
 
+        #Случайная генерация
         chunk_types = ["ground_rush", "random_platforms", "pit"]
         weights = CHUNK_WEIGHTS_EASY if diff_idx == 0 else CHUNK_WEIGHTS_HARD
         selected = random.choices(chunk_types, weights=weights)[0]
@@ -149,6 +162,7 @@ class LevelGenerator:
 
         x_start = WIDTH + SPAWN_OFFSET_X
 
+#генерация по типам
         if selected == "ground_rush":
             length = random.randint(GROUND_MIN_LENGTH, GROUND_MAX_LENGTH)
             chunk_width = length
@@ -215,6 +229,7 @@ class GameModel:
 
         self.reset_state()
 
+    #Алгоритм
     def reset_state(self):
         self.hp = MAX_HP
         self.gold = START_GOLD
@@ -236,6 +251,7 @@ class GameModel:
         self.word_manager.init_words(self.diff_idx)
         self.generator.reset(self.diff_idx)
 
+    #Алгоритм
     def update(self):
         if self.game_over: return
 
@@ -250,6 +266,7 @@ class GameModel:
         self._check_collisions()
         self._check_game_over()
 
+    #Алгоритм
     def _move_objects(self, speed):
         for obj_list in [self.platforms, self.pits, self.obstacles, self.heals, self.zones]:
             for obj in obj_list[:]:
@@ -257,6 +274,7 @@ class GameModel:
                 if obj.rect.right < 0:
                     obj_list.remove(obj)
 
+    #Алгоритм
     def _check_collisions(self):
         for pit in self.pits:
             if pit.rect.left + PIT_COLLISION_MARGIN < self.player.rect.centerx < pit.rect.right - PIT_COLLISION_MARGIN:
@@ -282,6 +300,7 @@ class GameModel:
                     self.coin_collected = True
                 self.zones.remove(zone)
 
+    #Алгоритм
     def _check_game_over(self):
         if self.hp <= 0 or self.gold >= TARGET_GOLD:
             self.game_over = True
