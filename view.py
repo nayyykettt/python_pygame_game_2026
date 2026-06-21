@@ -3,6 +3,7 @@ import sys
 from settings import *
 
 
+#Алгоритм 
 def load_image(path, size=None):
     try:
         img = pygame.image.load(path).convert_alpha()
@@ -14,6 +15,7 @@ def load_image(path, size=None):
         return None
 
 
+#Алгоритм
 def load_sound(path, volume=SOUND_VOLUME_DEFAULT):
     try:
         sound = pygame.mixer.Sound(path)

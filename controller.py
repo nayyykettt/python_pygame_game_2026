@@ -55,6 +55,7 @@ class GameController:
             pygame.quit()
             sys.exit()
 
+    #Алгоритм
     def process_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -96,6 +97,7 @@ class GameController:
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     self.state = "MENU"
 
+    #Алгоритм
     def update(self):
         self.process_events()
         if self.state == "PLAYING":
