@@ -15,13 +15,11 @@ class Player(GameObject):
         self.velocity_y = 0
         self.jump_count = 0
 
-    #Алгоритм
     def jump(self, max_jumps):
         if self.jump_count < max_jumps:
             self.velocity_y = JUMP_VELOCITY_START
             self.jump_count += 1
 
-    #Алгоритм
     def update_physics(self, platforms):
         self.rect.y += self.velocity_y
 
@@ -74,7 +72,7 @@ class WordManager:
         self.words = [random.choice(bank) for _ in range(WORDS_IN_ROW_COUNT)]
         self.current_idx = 0
         self.char_colors = [GRAY] * len(self.words[0])
-#проверка
+
     def process_input(self, char_typed, diff_idx) -> bool:
         if char_typed not in RUSSIAN_ALPHABET:
             return False
@@ -93,7 +91,6 @@ class WordManager:
         self.current_idx += 1
         return damage_taken
 
-#проверка
     def check_word_completion(self, diff_idx) -> bool:
         if self.current_idx >= len(self.words[0]):
             self.words_typed += 1
@@ -137,7 +134,6 @@ class LevelGenerator:
         hy = base_y - HEAL_SIZE - random.randint(0, HEAL_SPAWN_HEIGHT_VARIATION)
         model.heals.append(HealItem(hx, hy, HEAL_SIZE, HEAL_SIZE))
 
-    #Алгоритм
     def generate_chunk(self, model, speed, diff_idx):
         self.distance_since_last += speed
         if self.distance_since_last < self.next_dist:
@@ -240,7 +236,6 @@ class GameModel:
         self.word_manager.init_words(self.diff_idx)
         self.generator.reset(self.diff_idx)
 
-    #цикл игры
     def update(self):
         if self.game_over: return
 
@@ -255,7 +250,6 @@ class GameModel:
         self._check_collisions()
         self._check_game_over()
 
-    #Алгоритм
     def _move_objects(self, speed):
         for obj_list in [self.platforms, self.pits, self.obstacles, self.heals, self.zones]:
             for obj in obj_list[:]:
@@ -263,7 +257,7 @@ class GameModel:
                 if obj.rect.right < 0:
                     obj_list.remove(obj)
 
-    #Алгоритм
+    def _check_collisions(self):
         for pit in self.pits:
             if pit.rect.left + PIT_COLLISION_MARGIN < self.player.rect.centerx < pit.rect.right - PIT_COLLISION_MARGIN:
                 if self.player.rect.bottom >= GROUND_Y: self.hp = 0
@@ -288,7 +282,6 @@ class GameModel:
                     self.coin_collected = True
                 self.zones.remove(zone)
 
-    #Алгоритм №21 (легкий) — Проверка условий окончания игры (поражение или победа)
     def _check_game_over(self):
         if self.hp <= 0 or self.gold >= TARGET_GOLD:
             self.game_over = True
