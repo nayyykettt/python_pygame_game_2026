@@ -32,7 +32,7 @@ from settings import (
     TEST_OVERLAY_COLOR
 )
 
-
+#Изменение цвета
 def test_correct_input_colors_green():
     wm = WordManager()
     wm.init_words(TEST_ZERO_SPEED)
