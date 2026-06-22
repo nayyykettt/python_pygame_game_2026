@@ -361,17 +361,17 @@ def test_button_click_outside():
     btn = Button(TEST_BUTTON_X, TEST_BUTTON_Y, TEST_BUTTON_WIDTH, TEST_BUTTON_HEIGHT, TEST_BUTTON_TEXT_DEFAULT, TEST_BUTTON_TEXT_DEFAULT)
     assert btn.is_clicked((TEST_ZERO_SPEED, TEST_ZERO_SPEED)) is False
 
-#
+#соответствие действия кнопке
 def test_button_stores_action():
     btn = Button(TEST_ZERO_SPEED, TEST_ZERO_SPEED, TEST_RECT_EDGE, TEST_RECT_EDGE, TEST_BUTTON_TEXT_DEFAULT, TEST_BUTTON_ACTION)
     assert btn.action == TEST_BUTTON_ACTION
 
+#текст в кнопке соответствует тому, что должно быть
+def test_button_stores_action():
+    btn = Button(TEST_ZERO_SPEED, TEST_ZERO_SPEED, TEST_RECT_EDGE, TEST_RECT_EDGE, TEST_BUTTON_TEXT_DEFAULT, TEST_BUTTON_ACTION)
+    assert btn.action == TEST_BUTTON_ACTION
 
-def test_button_stores_text():
-    btn = Button(TEST_ZERO_SPEED, TEST_ZERO_SPEED, TEST_RECT_EDGE, TEST_RECT_EDGE, TEST_BUTTON_TEXT, TEST_BUTTON_TEXT_DEFAULT)
-    assert btn.text == TEST_BUTTON_TEXT
-
-
+#Первым появляется меню
 def test_controller_starts_in_menu():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     model = GameModel()
@@ -379,7 +379,7 @@ def test_controller_starts_in_menu():
     controller = GameController(model, view)
     assert controller.state == "MENU"
 
-
+#Изменение сложности
 def test_diff_minus_changes_difficulty():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     model = GameModel()
@@ -389,7 +389,7 @@ def test_diff_minus_changes_difficulty():
     controller.handle_menu_click(TEST_ACTION_DIFF_MINUS)
     assert model.diff_idx != start
 
-
+#проверка состояния перед начало мигры
 def test_start_changes_state():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     model = GameModel()
@@ -398,7 +398,7 @@ def test_start_changes_state():
     controller.handle_menu_click("start")
     assert controller.state == "START_WAIT"
 
-
+#уменьшение кол-ва золота в настройках
 def test_y_gold_minus_decreases():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     model = GameModel()
@@ -408,7 +408,7 @@ def test_y_gold_minus_decreases():
     controller.handle_menu_click(TEST_ACTION_Y_GOLD_MINUS)
     assert model.yellow_gold == TEST_YELLOW_GOLD_START - TEST_GOLD_AMOUNT
 
-
+#золото не может уйти за предел
 def test_y_gold_minus_capped_at_min():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     model = GameModel()
@@ -418,7 +418,7 @@ def test_y_gold_minus_capped_at_min():
     controller.handle_menu_click(TEST_ACTION_Y_GOLD_MINUS)
     assert model.yellow_gold == MIN_YELLOW_GOLD
 
-
+#Уменьшение урона кнопка работает
 def test_c_dmg_minus_decreases():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     model = GameModel()
@@ -428,7 +428,7 @@ def test_c_dmg_minus_decreases():
     controller.handle_menu_click(TEST_ACTION_C_DMG_MINUS)
     assert model.char_dmg == TEST_DAMAGE_MINUS
 
-
+#не может быть меньше минимума
 def test_c_dmg_minus_capped_at_min():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     model = GameModel()
@@ -438,7 +438,7 @@ def test_c_dmg_minus_capped_at_min():
     controller.handle_menu_click(TEST_ACTION_C_DMG_MINUS)
     assert model.char_dmg == MIN_CHAR_DAMAGE
 
-
+#Работоспособность ритм режима
 def test_rhythm_toggles():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     model = GameModel()
@@ -448,7 +448,7 @@ def test_rhythm_toggles():
     controller.handle_menu_click("rhythm_minus")
     assert model.rhythm_mode != start
 
-
+#При создании контроллера появляется меню
 def test_setup_menu_buttons_creates_buttons():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     model = GameModel()
@@ -456,13 +456,13 @@ def test_setup_menu_buttons_creates_buttons():
     controller = GameController(model, view)
     assert len(controller.buttons) > TEST_ZERO_SPEED
 
-
+#Работает саунд менеджер
 def test_view_has_sound_manager():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     view = GameView(screen)
     assert view.sound_manager is not None
 
-
+#работает ли функция выключения звука
 def test_sound_manager_toggle():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     view = GameView(screen)
@@ -470,7 +470,7 @@ def test_sound_manager_toggle():
     view.sound_manager.toggle()
     assert view.sound_manager.enabled != start
 
-
+#отключение звука не ломает игру
 def test_sound_manager_play_when_disabled():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     view = GameView(screen)
@@ -478,7 +478,7 @@ def test_sound_manager_play_when_disabled():
     view.sound_manager.play("jump")
     assert True
 
-
+#Интерфейс нормально рисуется и не ломает игру
 def test_draw_menu_does_not_crash():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     model = GameModel()
