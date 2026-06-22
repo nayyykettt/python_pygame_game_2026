@@ -5,7 +5,6 @@ pygame.init()
 infoObject = pygame.display.Info()
 WIDTH, HEIGHT = infoObject.current_w, infoObject.current_h
 FPS = 60
-
 START_Y = 130
 MENU_START_Y = 130
 MENU_SPASING_Y = 65
@@ -17,7 +16,6 @@ CORD_HPBAR = 40, HEIGHT - 175
 CORD_GOLD = 350, HEIGHT - 175
 WORDS_Y = HEIGHT - 110
 CHAR_UP = 20
-
 GROUND_LINE_SIZE = 3
 FONT_SIZE = 40
 LARGE_FONT_SIZE = 65
@@ -26,13 +24,10 @@ MENU_FONT_SIZE = 32
 BUTTON_BORDER_RADIUS = 5
 MENU_Y = 40
 WORDS_SPACING_X = 20
-
 THORN_WIDTH = 20
 THORN_HEIGHT = 20
 THORN_DEEP = 15
-
 PLATFORM_BORDER_RADIUS = 20
-
 JUMP = 3
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -64,7 +59,6 @@ OBSTACLE_DISTANCE_RANGES = [
 OVERLAY_ALPHA = 200
 OVERLAY_ALPHA2 = 230
 OVERLAY_SPACE = 50
-
 GAME_END_SPACE = 180
 STATS_SPACE = 40
 STATS_OFFSET = 45
@@ -81,19 +75,16 @@ MENU_ACTION_HEIGHT = 60
 MENU_START_TEXT = "ЗАПУСТИТЬ"
 MENU_QUIT_TEXT = "ВЫХОД"
 QUITSTART_OFFSET = 150
-
 WORDS_BANK = [
     ["вода", "небо", "луна", "стол", "стул", "рука", "нога", "глаз", "день", "ночь"],
     ["книга", "дверь", "дождь", "город", "рынок", "ведро", "птица", "актер", "океан", "трава"],
     ["солнце", "дерево", "дорога", "яблоко", "золото", "корова", "собака", "молоко", "ворона", "работа"],
     ["планета", "человек", "корабль", "телефон", "самолет", "капуста", "свобода", "красота", "природа", "картина"]
 ]
-
 RUSSIAN_ALPHABET = set("абвгдеёжзийклмнопрстуфхцчшщъыьэюя")
 WORDS_IN_ROW_COUNT = 4
 TARGET_GOLD = 200
 PLATFORM_EXT_SIZE = 15
-
 IMAGE_DIR = "images"
 TEX_PLAYER = f"{IMAGE_DIR}/Typing_dinO.png"
 TEX_OBSTACLE = f"{IMAGE_DIR}/zaborchik_KRIVOY.png"
@@ -102,7 +93,6 @@ TEX_ZONE_BLUE = f"{IMAGE_DIR}/monetka_blue.png"
 TEX_BG = f"{IMAGE_DIR}/45908.png"
 TEX_HP = f"{IMAGE_DIR}/HEAL_HEART.png"
 TEX_THORN = f"{IMAGE_DIR}/THORN_GROUND.png"
-
 ZONE_CHANCE_EASY = 0.75
 ZONE_MIN_PADDING_X = 10
 ZONE_WIDTH_SPAWN = 20
@@ -131,7 +121,6 @@ PIT_MIN_WIDTH = 100
 PIT_MAX_FACTOR = 0.8
 PIT_HEIGHT = 40
 SPAWN_RESET_OFFSET = 40 
-
 DEF_DIF = 1
 DEF_YELLOW_GOLD = 10
 DEF_BLUE_GOLD = 10
@@ -147,7 +136,6 @@ MIN_HEAL_AMOUNT = 0.1
 CHAR_DAMAGE_STEP = 0.1
 OBSTACLE_DAMAGE_STEP = 0.1
 HEAL_AMOUNT_STEP = 0.1
-
 MAX_HP = 10.0
 PLAYER_START_X = 200
 PLAYER_START_Y = GROUND_Y - PLAYER_SIZE
@@ -159,16 +147,13 @@ PROGRESSION_BASE = 1.0
 PROGRESSION_SCALE = 1.5
 INSTANT_DEATH_IDX = 3
 NO_DAMAGE_IDX = 0
-
 HEAL_CHANCE = 0.25
 HEAL_MIN_PADDING_X = 50
 HEAL_SPAWN_HEIGHT_VARIATION = 100
 OBS_PADDING_GROUND = 50
 OBS_SPAWN_MIN_OFFSET = 50
-
 ZONE_CHANCE_RUSH = 0.8
 ZONE_CHANCE_PLAT= 0.85
-
 TEST_PLAYER_X = 100
 TEST_PLAYER_Y = 200
 TEST_PLATFORM_X = 50
@@ -185,20 +170,15 @@ TEST_BUTTON_Y = 100
 TEST_BUTTON_WIDTH = 50
 TEST_BUTTON_HEIGHT = 30
 TEST_YELLOW_GOLD_START = 5
-
 SOUND_DIR = "sounds"
-
 SOUND_JUMP = f"{SOUND_DIR}/jump.wav"
 SOUND_COIN = f"{SOUND_DIR}/coin.ogg"
 SOUND_DAMAGE = f"{SOUND_DIR}/damage.wav"
 SOUND_WIN = f"{SOUND_DIR}/win.wav"
 SOUND_LOSE = f"{SOUND_DIR}/lose.wav"
 SOUND_OBSTACLE = f"{SOUND_DIR}/obstacle.wav"
-
-SOUND_VOLUME_DEFAULT = 0.5
-
+SOUND_VOLUME_DEFAULT = 0.2
 FONT_PATH = "fonts/Roboto-VariableFont_wdth,wght.ttf"
-
 TEST_OBJ_SIZE = 50
 TEST_OBJ_SIZE_SMALL = 10
 TEST_MOVE_SPEED = 10
