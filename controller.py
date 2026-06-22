@@ -98,7 +98,7 @@ class GameController:
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     self.state = "MENU"
 
-    #Алгоритм Обработка ввода, обновление физики если играет
+    # Обработка ввода, обновление физики если играет
     def update(self):
         self.process_events()
         if self.state == "PLAYING":
