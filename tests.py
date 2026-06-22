@@ -190,7 +190,7 @@ def test_easy_no_damage():
     model._check_collisions()
     assert model.hp == start_hp
 
-
+#работает ли лечение
 def test_heal_increases_hp():
     model = GameModel()
     model.hp = TEST_HP_LOW
@@ -199,7 +199,7 @@ def test_heal_increases_hp():
     model._check_collisions()
     assert model.hp > TEST_HP_LOW
 
-
+#проверка на максимальное здоровье
 def test_heal_caps_at_max_hp():
     model = GameModel()
     model.hp = MAX_HP - TEST_HP_OFFSET
@@ -208,7 +208,7 @@ def test_heal_caps_at_max_hp():
     model._check_collisions()
     assert model.hp == MAX_HP
 
-
+#Добавляется ли золото
 def test_yellow_zone_adds_gold():
     model = GameModel()
     model.gold = TEST_GOLD_START
@@ -217,7 +217,7 @@ def test_yellow_zone_adds_gold():
     model._check_collisions()
     assert model.gold > TEST_GOLD_START
 
-
+#Отнимается ли золото
 def test_blue_zone_removes_gold():
     model = GameModel()
     model.gold = TEST_GOLD_START
@@ -226,7 +226,7 @@ def test_blue_zone_removes_gold():
     model._check_collisions()
     assert model.gold < TEST_GOLD_START
 
-
+#нельзя уйти в кредит
 def test_gold_never_negative():
     model = GameModel()
     model.gold = TEST_ZERO_SPEED
@@ -235,7 +235,7 @@ def test_gold_never_negative():
     model._check_collisions()
     assert model.gold == TEST_ZERO_SPEED
 
-
+#не превышается кап золота
 def test_gold_capped_at_target():
     model = GameModel()
     model.gold = TARGET_GOLD - TEST_GOLD_AMOUNT
@@ -245,7 +245,7 @@ def test_gold_capped_at_target():
     model._check_collisions()
     assert model.gold <= TARGET_GOLD
 
-
+#убивают ли ямы
 def test_pit_kills():
     model = GameModel()
     model.player.rect.bottom = GROUND_Y
@@ -254,14 +254,14 @@ def test_pit_kills():
     model._check_collisions()
     assert model.hp == TEST_ZERO_SPEED
 
-
+#работает ли окончание игры
 def test_zero_hp_game_over():
     model = GameModel()
     model.hp = TEST_ZERO_SPEED
     model._check_game_over()
     assert model.game_over is True
 
-
+# победа при капе золота
 def test_target_gold_victory():
     model = GameModel()
     model.gold = TARGET_GOLD
@@ -269,33 +269,33 @@ def test_target_gold_victory():
     assert model.game_over is True
     assert model.is_victory is True
 
-
+# устанавливается ли значение по умолчанию для сложности
 def test_model_default_difficulty():
     model = GameModel()
     assert model.diff_idx == DEF_DIF
 
-
+#удаляются ли платформы при рестарте
 def test_reset_clears_platforms():
     model = GameModel()
     model.platforms = [Platform(TEST_ZERO_SPEED, TEST_ZERO_SPEED, TEST_OBJ_SIZE, TEST_OBJ_SIZE)]
     model.reset_state()
     assert len(model.platforms) == TEST_ZERO_SPEED
 
-
+#препятствия удаляются
 def test_reset_clears_obstacles():
     model = GameModel()
     model.obstacles = [Obstacle(TEST_ZERO_SPEED, TEST_ZERO_SPEED, TEST_OBJ_SIZE, TEST_OBJ_SIZE)]
     model.reset_state()
     assert len(model.obstacles) == TEST_ZERO_SPEED
 
-
+#пзоны удаляются
 def test_reset_clears_zones():
     model = GameModel()
     model.zones = [Zone(TEST_ZERO_SPEED, TEST_ZERO_SPEED, TEST_OBJ_SIZE, TEST_OBJ_SIZE, TEST_ZONE_TYPE_YELLOW)]
     model.reset_state()
     assert len(model.zones) == TEST_ZERO_SPEED
 
-
+#Остановка игрового цикла при окончании игры
 def test_game_over_no_update():
     model = GameModel()
     model.game_over = True
@@ -303,14 +303,14 @@ def test_game_over_no_update():
     model.update()
     assert model.gold == start_gold
 
-
+#удаляются ли объекты за экраном
 def test_move_objects_removes_offscreen():
     model = GameModel()
     model.obstacles = [Obstacle(-TEST_PLAYER_POS_X, TEST_ZERO_SPEED, TEST_OBJ_SIZE, TEST_OBJ_SIZE)]
     model._move_objects(TEST_MOVE_SPEED)
     assert len(model.obstacles) == TEST_ZERO_SPEED
 
-
+#смещаются ли объекты
 def test_move_objects_moves_left():
     model = GameModel()
     obs = Obstacle(TEST_PLAYER_POS_X, TEST_ZERO_SPEED, TEST_OBJ_SIZE, TEST_OBJ_SIZE)
@@ -318,7 +318,7 @@ def test_move_objects_moves_left():
     model._move_objects(TEST_MOVE_SPEED_SMALL)
     assert obs.rect.x == TEST_PLAYER_POS_X - TEST_MOVE_SPEED_SMALL
 
-
+#Веселье убивает забором
 def test_instant_death_obstacle():
     model = GameModel()
     model.diff_idx = INSTANT_DEATH_IDX
@@ -327,21 +327,21 @@ def test_instant_death_obstacle():
     model._check_collisions()
     assert model.hp == TEST_ZERO_SPEED
 
-
+#Смерть = поражение
 def test_is_victory_false_on_death():
     model = GameModel()
     model.hp = TEST_ZERO_SPEED
     model._check_game_over()
     assert model.is_victory is False
 
-
+#Меняются ли расстояния(препятствия) при сбросе
 def test_level_generator_reset():
     lg = LevelGenerator()
     lg.reset(TEST_ZERO_SPEED)
     assert lg.distance_since_last == TEST_ZERO_SPEED
     assert lg.next_dist > TEST_ZERO_SPEED
 
-
+# Cчитает ли генератор пройденное расстояние
 def test_generate_chunk_increments_distance():
     lg = LevelGenerator()
     lg.reset(TEST_ZERO_SPEED)
@@ -351,17 +351,17 @@ def test_generate_chunk_increments_distance():
     lg.generate_chunk(model, TEST_MOVE_SPEED, TEST_ZERO_SPEED)
     assert lg.distance_since_last == TEST_MOVE_SPEED
 
-
+#Понимает ли курсор внутри
 def test_button_click_inside():
     btn = Button(TEST_BUTTON_X, TEST_BUTTON_Y, TEST_BUTTON_WIDTH, TEST_BUTTON_HEIGHT, TEST_BUTTON_TEXT_DEFAULT, TEST_BUTTON_TEXT_DEFAULT)
     assert btn.is_clicked((TEST_BUTTON_X + TEST_GOLD_AMOUNT, TEST_BUTTON_Y + TEST_GOLD_AMOUNT)) is True
 
-
+#понимает ли курсор снаружи
 def test_button_click_outside():
     btn = Button(TEST_BUTTON_X, TEST_BUTTON_Y, TEST_BUTTON_WIDTH, TEST_BUTTON_HEIGHT, TEST_BUTTON_TEXT_DEFAULT, TEST_BUTTON_TEXT_DEFAULT)
     assert btn.is_clicked((TEST_ZERO_SPEED, TEST_ZERO_SPEED)) is False
 
-
+#
 def test_button_stores_action():
     btn = Button(TEST_ZERO_SPEED, TEST_ZERO_SPEED, TEST_RECT_EDGE, TEST_RECT_EDGE, TEST_BUTTON_TEXT_DEFAULT, TEST_BUTTON_ACTION)
     assert btn.action == TEST_BUTTON_ACTION
