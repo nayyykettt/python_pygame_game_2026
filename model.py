@@ -10,7 +10,7 @@ class GameObject:
     def move(self, speed):
         self.rect.x -= speed
 
-#класс Игрока. 
+#класс Игрока.(наследование)
 class Player(GameObject):
     def __init__(self, x, y, size):
         super().__init__(x, y, size, size)
@@ -24,7 +24,6 @@ class Player(GameObject):
 
     #Алгоритм
     def update_physics(self, platforms):
-        #Передвигаем игрока по вертикали
         self.rect.y += self.velocity_y
 
         #столкновение с платформой
@@ -34,7 +33,7 @@ class Player(GameObject):
                     self.rect.top = plat.rect.bottom
                     self.velocity_y = 0
                     break
-
+                
         self.velocity_y += GRAVITY
         current_floor = GROUND_Y
         #определяем находится ли игрок над платформой. Делаем её полом.
@@ -260,7 +259,8 @@ class GameModel:
 
     #Алгоритм обновление скорости, физики, колизий и прочего.
     def update(self):
-        if self.game_over: return
+        if self.game_over:
+            return
 
         progression = 1.0 + ((self.gold / TARGET_GOLD) * PROGRESSION_SCALE)
         diff_factor = DIFFICULTY_MULTIPLIERS[self.diff_idx] * progression
