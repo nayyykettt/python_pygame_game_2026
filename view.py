@@ -25,7 +25,7 @@ def load_sound(path, volume=SOUND_VOLUME_DEFAULT):
         print(f"[WARNING] Не удалось загрузить звук {path}: {e}")
         return None
 
-
+#Класс управления звуками
 class SoundManager:
     def __init__(self):
         try:
@@ -48,6 +48,7 @@ class SoundManager:
             if sound:
                 sound.play()
 
+#выключение
     def toggle(self):
         self.enabled = not self.enabled
         return self.enabled
@@ -55,6 +56,7 @@ class SoundManager:
 
 class GameView:
     def __init__(self, screen):
+        #создание разных разамероф шрифтов, загрузка текстурок и звуков
         self.screen = screen
         try:
             self.font = pygame.font.SysFont("arial", FONT_SIZE)
@@ -72,11 +74,13 @@ class GameView:
         self.tex_thorn = load_image(TEX_THORN, (THORN_WIDTH, THORN_HEIGHT + THORN_DEEP))
         self.sound_manager = SoundManager()
 
+#отрисовка и центрирование
     def draw_button(self, btn):
         pygame.draw.rect(self.screen, btn.bg_color, btn.rect, border_radius=BUTTON_BORDER_RADIUS)
         txt = self.menu_font.render(btn.text, True, btn.text_color)
         self.screen.blit(txt, (btn.rect.x + (btn.rect.width - txt.get_width()) // 2, btn.rect.y + (btn.rect.height - txt.get_height()) // 2))
 
+    #рисовака меню
     def draw_menu(self, buttons, model):
         self.screen.fill(WHITE)
         title = self.large_font.render("НАСТРОЙКИ БАЛАНСА", True, BLACK)
@@ -106,6 +110,7 @@ class GameView:
         for btn in buttons:
             self.draw_button(btn)
 
+    #послойная отрисовка игры. Нет текстур = прямоугольники и треугольнички
     def draw_game(self, model):
         if self.tex_bg:
             self.screen.blit(self.tex_bg, (0, 0))
@@ -188,6 +193,7 @@ class GameView:
         self.screen.blit(t1, (WIDTH // 2 - t1.get_width() // 2, HEIGHT // 2 - OVERLAY_SPACE))
         self.screen.blit(t2, (WIDTH // 2 - t2.get_width() // 2, HEIGHT // 2 + OVERLAY_SPACE))
 
+#Ура победа
     def draw_game_over(self, model):
         overlay = pygame.Surface((WIDTH, HEIGHT))
         overlay.set_alpha(OVERLAY_ALPHA2)

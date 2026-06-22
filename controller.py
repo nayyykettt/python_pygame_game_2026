@@ -1,7 +1,7 @@
 import pygame
 import sys
 from settings import *
-
+#базовый класс
 class Button:
     def __init__(self, x, y, w, h, text, action_name, bg_color=LIGHT_GRAY, text_color=BLACK):
         self.rect = pygame.Rect(x, y, w, h)
@@ -23,16 +23,17 @@ class GameController:
     def setup_menu_buttons(self):
         self.buttons = []
         start_y = START_Y
-
+#кнопки +- и параметры
         actions = ["diff", "y_gold", "b_gold", "c_dmg", "o_dmg", "heal", "rhythm"]
         for i, act in enumerate(actions):
             y = start_y + i * MENU_SPASING_Y
             self.buttons.append(Button(WIDTH // 2 + MENU_MINUS_OFFSET_X, y, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, "-", f"{act}_minus"))
             self.buttons.append(Button(WIDTH // 2 + MENU_PLUS_OFFSET_X, y, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, "+", f"{act}_plus"))
 
+#Запустить и выход
         self.buttons.append(Button(WIDTH // 2 - QUITSTART_OFFSET, start_y + MENU_START_Y_OFFSET, MENU_ACTION_WIDTH, MENU_ACTION_HEIGHT, MENU_START_TEXT, "start", GREEN, WHITE))
         self.buttons.append(Button(WIDTH // 2 - QUITSTART_OFFSET, start_y + MENU_START_Y_OFFSET + MENU_BUTTON_GAP_Y, MENU_ACTION_WIDTH, MENU_ACTION_HEIGHT, MENU_QUIT_TEXT, "quit", RED, WHITE))
-
+#обработка кликов
     def handle_menu_click(self, action):
         m = self.model
         if action == "diff_minus": m.diff_idx = (m.diff_idx - 1) % 4
@@ -55,7 +56,7 @@ class GameController:
             pygame.quit()
             sys.exit()
 
-    #Алгоритм
+    #Алгоритм разделения на собыьтя. Меню, запуск, игра, ритм режим, конец игры
     def process_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -97,7 +98,7 @@ class GameController:
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     self.state = "MENU"
 
-    #Алгоритм
+    #Алгоритм Обработка ввода, обновление физики если играет
     def update(self):
         self.process_events()
         if self.state == "PLAYING":
@@ -114,7 +115,7 @@ class GameController:
                     self.view.sound_manager.play("win")
                 else:
                     self.view.sound_manager.play("lose")
-
+    #отрисовка
     def render(self):
         if self.state == "MENU":
             self.view.draw_menu(self.buttons, self.model)
