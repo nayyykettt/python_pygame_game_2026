@@ -47,7 +47,7 @@ def test_wrong_input_colors_red():
     wm.process_input(TEST_CHAR_WRONG, TEST_ZERO_SPEED)
     assert wm.char_colors[TEST_ZERO_SPEED] == RED
 
-
+#урон за неправильный результат
 def test_wrong_input_returns_damage():
     wm = WordManager()
     wm.init_words(TEST_ZERO_SPEED)
@@ -64,14 +64,14 @@ def test_complete_word_returns_true():
     completed = wm.check_word_completion(TEST_ZERO_SPEED)
     assert completed is True
 
-
+#национальная проверка
 def test_non_russian_ignored():
     wm = WordManager()
     wm.init_words(TEST_ZERO_SPEED)
     result = wm.process_input(TEST_CHAR_NON_RUSSIAN, TEST_ZERO_SPEED)
     assert result is False
 
-
+#переход на новое слово
 def test_check_word_completion_resets_current_idx():
     wm = WordManager()
     wm.init_words(TEST_ZERO_SPEED)
@@ -81,20 +81,20 @@ def test_check_word_completion_resets_current_idx():
     wm.check_word_completion(TEST_ZERO_SPEED)
     assert wm.current_idx == TEST_ZERO_SPEED
 
-
+#изменение скорости при прыжке
 def test_jump_sets_velocity():
     p = Player(TEST_ZERO_SPEED, GROUND_Y - PLAYER_SIZE, PLAYER_SIZE)
     p.jump(JUMP)
     assert p.velocity_y == JUMP_VELOCITY_START
 
-
+#проверка гравитауии
 def test_gravity_pulls_down():
     p = Player(TEST_ZERO_SPEED, TEST_PLAYER_Y, PLAYER_SIZE)
     p.velocity_y = TEST_ZERO_SPEED
     p.update_physics([])
     assert p.velocity_y == GRAVITY
 
-
+#становится ли платформа полом
 def test_player_lands_on_platform():
     p = Player(TEST_PLAYER_X, TEST_PLAYER_Y, PLAYER_SIZE)
     p.velocity_y = GRAVITY * TEST_GRAVITY_FRAMES
@@ -102,7 +102,7 @@ def test_player_lands_on_platform():
     p.update_physics([plat])
     assert p.rect.bottom == plat.rect.top
 
-
+#проваливается ли игрок под пол
 def test_player_stops_at_ground():
     p = Player(TEST_ZERO_SPEED, GROUND_Y - PLAYER_SIZE, PLAYER_SIZE)
     p.velocity_y = GRAVITY * TEST_GRAVITY_FRAMES
@@ -110,14 +110,14 @@ def test_player_stops_at_ground():
     assert p.rect.bottom == GROUND_Y
     assert p.velocity_y == TEST_ZERO_SPEED
 
-
+#падает ли игрок
 def test_player_falls_due_to_gravity():
     p = Player(TEST_PLAYER_POS_X, TEST_PLAYER_POS_Y, PLAYER_SIZE)
     p.velocity_y = TEST_ZERO_SPEED
     p.update_physics([])
     assert p.velocity_y == GRAVITY
 
-
+#может ли улететь в потолок
 def test_player_ceiling_collision():
     p = Player(TEST_ZERO_SPEED, TEST_ZERO_SPEED, PLAYER_SIZE)
     p.velocity_y = -TEST_MOVE_SPEED
@@ -125,13 +125,13 @@ def test_player_ceiling_collision():
     assert p.rect.y == TEST_ZERO_SPEED
     assert p.velocity_y == TEST_ZERO_SPEED
 
-
+#двигаются ли объекты влево
 def test_gameobject_move():
     obj = GameObject(TEST_PLAYER_POS_X, TEST_PLAYER_POS_Y, TEST_OBJ_SIZE, TEST_OBJ_SIZE)
     obj.move(TEST_MOVE_SPEED)
     assert obj.rect.x == TEST_PLAYER_POS_X - TEST_MOVE_SPEED
 
-
+#является ли классом GameObject
 def test_obstacle_is_gameobject():
     obs = Obstacle(TEST_ZERO_SPEED, TEST_ZERO_SPEED, TEST_OBJ_SIZE, TEST_OBJ_SIZE)
     assert isinstance(obs, GameObject)
@@ -156,7 +156,7 @@ def test_model_starts_with_zero_gold():
     model = GameModel()
     assert model.gold == START_GOLD
 
-
+#проверка на сброс состояния Хп, монеты
 def test_reset_sets_full_hp():
     model = GameModel()
     model.hp = TEST_HP_LOW
@@ -170,7 +170,7 @@ def test_reset_clears_gold():
     model.reset_state()
     assert model.gold == START_GOLD
 
-
+# наносится ли урон
 def test_obstacle_deals_damage():
     model = GameModel()
     model.diff_idx = TEST_GOLD_AMOUNT
@@ -180,7 +180,7 @@ def test_obstacle_deals_damage():
     model._check_collisions()
     assert model.hp < start_hp
 
-
+# наносится ли урон на низком уровен сложности
 def test_easy_no_damage():
     model = GameModel()
     model.diff_idx = TEST_ZERO_SPEED

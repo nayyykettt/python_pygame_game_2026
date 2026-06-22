@@ -54,10 +54,15 @@ class Player(GameObject):
             if self.velocity_y < 0:
                 self.velocity_y = 0
 
-class Obstacle(GameObject): pass
-class Platform(GameObject): pass
-class Pit(GameObject): pass
-class HealItem(GameObject): pass
+#наследуются без изменений
+class Obstacle(GameObject):
+    pass
+class Platform(GameObject):
+    pass
+class Pit(GameObject):
+    pass
+class HealItem(GameObject):
+    pass
 class Zone(GameObject):
     def __init__(self, x, y, width, height, zone_type):
         super().__init__(x, y, width, height)
