@@ -115,7 +115,7 @@ class GameController:
                     self.view.sound_manager.play("win")
                 else:
                     self.view.sound_manager.play("lose")
-    #отрисовка
+    #отрисовка по состояниям
     def render(self):
         if self.state == "MENU":
             self.view.draw_menu(self.buttons, self.model)
