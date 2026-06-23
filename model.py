@@ -281,7 +281,7 @@ class GameModel:
                 if obj.rect.right < 0:
                     obj_list.remove(obj)
 
-    #Алгоритм коллизий
+    #Алгоритм коллизий 
     def _check_collisions(self):
         for pit in self.pits:
             if pit.rect.left + PIT_COLLISION_MARGIN < self.player.rect.centerx < pit.rect.right - PIT_COLLISION_MARGIN:
