@@ -36,19 +36,32 @@ class GameController:
 #обработка кликов
     def handle_menu_click(self, action):
         m = self.model
-        if action == "diff_minus": m.diff_idx = (m.diff_idx - 1) % 4
-        elif action == "diff_plus": m.diff_idx = (m.diff_idx + 1) % 4
-        elif action == "y_gold_minus": m.yellow_gold = max(1, m.yellow_gold - 1)
-        elif action == "y_gold_plus": m.yellow_gold += 1
-        elif action == "b_gold_minus": m.blue_gold = max(0, m.blue_gold - 1)
-        elif action == "b_gold_plus": m.blue_gold += 1
-        elif action == "c_dmg_minus": m.char_dmg = max(0.0, m.char_dmg - 0.1)
-        elif action == "c_dmg_plus": m.char_dmg += 0.1
-        elif action == "o_dmg_minus": m.obs_dmg = max(0.0, m.obs_dmg - 0.1)
-        elif action == "o_dmg_plus": m.obs_dmg += 0.1
-        elif action == "heal_minus": m.heal_amt = max(0.1, m.heal_amt - 0.1)
-        elif action == "heal_plus": m.heal_amt += 0.1
-        elif action == "rhythm_minus" or action == "rhythm_plus": m.rhythm_mode = not m.rhythm_mode
+        if action == "diff_minus":
+            m.diff_idx = (m.diff_idx - 1) % 4
+        elif action == "diff_plus":
+            m.diff_idx = (m.diff_idx + 1) % 4
+        elif action == "y_gold_minus":
+            m.yellow_gold = max(1, m.yellow_gold - 1)
+        elif action == "y_gold_plus":
+            m.yellow_gold += 1
+        elif action == "b_gold_minus":
+            m.blue_gold = max(0, m.blue_gold - 1)
+        elif action == "b_gold_plus":
+            m.blue_gold += 1
+        elif action == "c_dmg_minus":
+            m.char_dmg = max(0.0, m.char_dmg - 0.1)
+        elif action == "c_dmg_plus":
+            m.char_dmg += 0.1
+        elif action == "o_dmg_minus":
+            m.obs_dmg = max(0.0, m.obs_dmg - 0.1)
+        elif action == "o_dmg_plus":
+            m.obs_dmg += 0.1
+        elif action == "heal_minus":
+            m.heal_amt = max(0.1, m.heal_amt - 0.1)
+        elif action == "heal_plus":
+            m.heal_amt += 0.1
+        elif action == "rhythm_minus" or action == "rhythm_plus":
+            m.rhythm_mode = not m.rhythm_mode
         elif action == "start": 
             m.reset_state()
             self.state = "START_WAIT"
@@ -56,7 +69,7 @@ class GameController:
             pygame.quit()
             sys.exit()
 
-    #Алгоритм разделения на собыьтя. Меню, запуск, игра, ритм режим, конец игры
+    #Алгоритм Взаимодействие с игрой
     def process_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -68,6 +81,10 @@ class GameController:
                     for btn in self.buttons:
                         if btn.is_clicked(event.pos):
                             self.handle_menu_click(btn.action)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
 
             elif self.state == "START_WAIT":
                 if event.type in (pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN):

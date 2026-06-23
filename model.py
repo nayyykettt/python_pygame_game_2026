@@ -76,7 +76,7 @@ class WordManager:
         self.wrong_chars = 0
         self.total_chars = 0
 
-#Алгоритм
+#Алгоритм вывод ряда
     def init_words(self, diff_idx):
         bank = WORDS_BANK[diff_idx]
         self.words = [random.choice(bank) for _ in range(WORDS_IN_ROW_COUNT)]
@@ -122,7 +122,7 @@ class LevelGenerator:
         self.distance_since_last = 0
         self.next_dist = random.randint(*OBSTACLE_DISTANCE_RANGES[diff_idx])
 
-    #Алгоритм
+    #Алгоритм 
     def _spawn_random_zone(self, model, start_x, width, base_y, diff_idx, chance=ZONE_CHANCE_EASY):
         if random.random() > chance or width < ZONE_WIDTH + ZONE_WIDTH_SPAWN:
             return
